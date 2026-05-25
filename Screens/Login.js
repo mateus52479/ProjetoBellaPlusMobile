@@ -9,7 +9,7 @@ export default function Login({navigation}) {
         <Text style={styles.txt}> Bella plus Mulherão</Text>
         <TextInput style={styles.barra}  placeholder='Usuario' />
         <TextInput style={styles.barra} placeholder='Senha' secureTextEntry={true} />
-        <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={() => navigation.navigate('Home')}>Entrar</Button>
+        <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={() => navigation.navigate('Catalog')}>Entrar</Button>
     </ImageBackground>
    
   );
