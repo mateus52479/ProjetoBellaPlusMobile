@@ -39,7 +39,7 @@ export default function Login({ navigation }) {
   }
 
   return (
-    <ImageBackground style={styles.fundo} source={require('../Images/roupa.jpg')} resizeMode='cover'>
+    <ImageBackground style={styles.fundo} source={require('../Images/roupa.png')} resizeMode='cover'>
       <View>
               <Text style={styles.txt}> Bella plus Mulherão</Text>
       
@@ -58,8 +58,8 @@ export default function Login({ navigation }) {
       secureTextEntry={true} 
       />
 
-      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={CriarConta()}>Cadastrar</Button>
-      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={EntrarConta()}>Entrar</Button>
+      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={CriarConta}>Cadastrar</Button>
+      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={EntrarConta}>Entrar</Button>
       </View>
 
     </ImageBackground>
