@@ -5,11 +5,11 @@ import { Button } from 'react-native-paper';
 
 export default function Login({navigation}) {
   return ( 
-      <ImageBackground style={styles.fundo} source={require('../Images/roupa.jpg') } resizeMode='cover'>
+      <ImageBackground style={styles.fundo} source={require('../Images/roupa.png') } resizeMode='cover'>
         <Text style={styles.txt}> Bella plus Mulherão</Text>
         <TextInput style={styles.barra}  placeholder='Usuario' />
         <TextInput style={styles.barra} placeholder='Senha' secureTextEntry={true} />
-        <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={() => navigation.navigate('Catalog')}>Entrar</Button>
+        <Button style={styles.button} buttonColor='#ca8300ff' mode='contained' onPress={() => navigation.navigate('Catalog')}>Entrar</Button>
     </ImageBackground>
    
   );
@@ -18,10 +18,10 @@ export default function Login({navigation}) {
 const styles = StyleSheet.create({
 
   barra: {
-    borderColor: '#2c1b02ff',
+    borderColor: '#613b01ff',
     borderWidth: 1,
     padding: 5,
-    color:'#704e10ff',
+    color:'#291c03ff',
     borderRadius: 10,
     width: 170
   },
