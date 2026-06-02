@@ -69,10 +69,10 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
 
   barra: {
-    borderColor: '#2c1b02ff',
+    borderColor: '#613b01ff',
     borderWidth: 1,
     padding: 5,
-    color: '#704e10ff',
+    color:'#291c03ff',
     borderRadius: 10,
     width: 170
   },
