@@ -3,7 +3,7 @@ import { StyleSheet, Text, View , TextInput} from 'react-native';
 import { Button } from 'react-native-paper';
 
 
-export default function Home() {
+export default function Home({ navigation }) {
   return ( 
       <View style={styles.container}>
       <Text>funfou</Text>

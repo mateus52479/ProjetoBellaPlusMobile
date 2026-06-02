@@ -1,17 +1,68 @@
+import {TextInput, Text, StyleSheet, Alert, ImageBackground, View } from "react-native";
+import { Button } from "react-native-paper";
+import { useState } from "react";
+import { firebaseConfig } from "../firebaseConfig";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 
-import { StyleSheet, Text, View , TextInput, ImageBackground} from 'react-native';
-import { Button } from 'react-native-paper';
+export default function Login({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
 
 
-export default function Login({navigation}) {
-  return ( 
-      <ImageBackground style={styles.fundo} source={require('../Images/roupa.png') } resizeMode='cover'>
-        <Text style={styles.txt}> Bella plus Mulherão</Text>
-        <TextInput style={styles.barra}  placeholder='Usuario' />
-        <TextInput style={styles.barra} placeholder='Senha' secureTextEntry={true} />
-        <Button style={styles.button} buttonColor='#ca8300ff' mode='contained' onPress={() => navigation.navigate('Catalog')}>Entrar</Button>
+  const auth = getAuth();
+
+  const CriarConta = () => {
+    createUserWithEmailAndPassword(auth, email, senha)
+      .then((userCredential) => {
+        console.log('Usuário criado com sucesso!');
+        const user = userCredential.user;
+        console.log(user);
+        navigation.navigate('Catalog');
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert.alert(error.message);
+      });
+  }
+
+  const EntrarConta = () => {
+    signInWithEmailAndPassword(auth, email, senha)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        navigation.navigate('Catalog');
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert.alert(error.message);
+      });
+  }
+
+  return (
+    <ImageBackground style={styles.fundo} source={require('../Images/roupa.jpg')} resizeMode='cover'>
+      <View>
+              <Text style={styles.txt}> Bella plus Mulherão</Text>
+      
+      <TextInput 
+      style={styles.barra} 
+      placeholder='Usuario' 
+      value={email} 
+      onChangeText={setEmail}
+      />
+      
+      <TextInput 
+      style={styles.barra} 
+      placeholder='Senha' 
+      value={senha}
+      onChangeText={setSenha}
+      secureTextEntry={true} 
+      />
+
+      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={CriarConta()}>Cadastrar</Button>
+      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={EntrarConta()}>Entrar</Button>
+      </View>
+
     </ImageBackground>
-   
   );
 }
 
@@ -25,7 +76,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: 170
   },
-  button:{
+  button: {
     margin: 10,
   },
   fundo: {
@@ -33,7 +84,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center'
   },
-  txt:{
+  txt: {
     fontStyle: 'italic'
   }
 });
