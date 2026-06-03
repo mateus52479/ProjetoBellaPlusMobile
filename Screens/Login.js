@@ -1,15 +1,12 @@
 import {TextInput, Text, StyleSheet, Alert, ImageBackground, View } from "react-native";
 import { Button } from "react-native-paper";
 import { useState } from "react";
-import { firebaseConfig } from "../firebaseConfig";
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import {firebaseConfig, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "../firebaseConfig";
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
 
-
-  const auth = getAuth();
 
   const CriarConta = () => {
     createUserWithEmailAndPassword(auth, email, senha)
