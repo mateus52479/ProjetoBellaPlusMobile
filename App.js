@@ -4,7 +4,6 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Entypo from '@expo/vector-icons/Entypo';
 
 import Login from './Screens/Login'
-import Home from './Screens/Home'
 import Catalog from "./Screens/Catalog";
 
 
