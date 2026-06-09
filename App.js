@@ -5,6 +5,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 import Login from './Screens/Login'
 import Catalog from "./Screens/Catalog";
+import Pagamento from "./Screens/Pagamento";
 
 
 function TabNavigate(){
@@ -13,6 +14,14 @@ function TabNavigate(){
       <Tab.Navigator>
         <Tab.Screen name="Catalogo" component={Catalog} 
         options={{
+          headerShown: false,
+          tabBarIcon: () => (
+          <Entypo name="globe" size={20} color='rgb(144, 143, 143)' />
+          )
+          }}/>
+
+          <Tab.Screen name="Pagamento" component={Pagamento} 
+          options={{
           headerShown: false,
           tabBarIcon: () => (
           <Entypo name="globe" size={20} color='rgb(144, 143, 143)' />
@@ -31,6 +40,8 @@ export default function App(){
           <Stack.Navigator>
             <Stack.Screen name="Login" component={Login}/>
             <Stack.Screen name="Catalog" component={TabNavigate} options={{
+          headerShown: false}} />
+          <Stack.Screen name="Pagamento" component={TabNavigate} options={{
           headerShown: false}} />
           </Stack.Navigator>
       </NavigationContainer>
