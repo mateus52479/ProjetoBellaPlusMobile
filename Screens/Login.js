@@ -30,7 +30,7 @@ export default function Login({ navigation }) {
         console.log('Usuário criado com sucesso!');
         const user = userCredential.user;
         console.log(user);
-        navigation.navigate('Catalog');
+        navigation.navigate('ADM');
       })
       .catch((error) => {
         console.log(error);
@@ -43,7 +43,7 @@ export default function Login({ navigation }) {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        navigation.navigate('Catalog');
+        navigation.navigate('ADM');
       })
       .catch((error) => {
         console.log(error);
