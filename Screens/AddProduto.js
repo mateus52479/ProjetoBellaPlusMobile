@@ -29,7 +29,6 @@ export default function AddProdutos() {
             console.log('erro ao cadastrar', error)
         }
     }
-
     return(
         <View style={styles.container}>
 
