@@ -61,13 +61,13 @@ export default function Login({ navigation }) {
     <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={CriarConta}>Cadastrar</Button>
     <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={EntrarConta}>Entrar</Button>
   
-  {/* Rodapé */}
+  
   <View style={styles.footer}>
   <TouchableOpacity  style={styles.instagramContainer} onPress={abrirInstagram}>
     <Entypo name="instagram-with-circle" size={24} color="#f9b659"/>
     <Text style={styles.instagramText}>@bellaplusmulherao</Text>
   </TouchableOpacity>
-</View>
+  </View>
 
   </View>
 
