@@ -4,20 +4,14 @@ import {useState} from 'react';
 
 import { addDoc, collection } from 'firebase/firestore';
 
-export default function ADM({navigation}) {
+export default function GerenciarProduto({navigation}) {
 
   return (
 
     <View style={styles.container}>
-        <Text style={styles.txt}>Painel de Administrador</Text>
+        <Text style={styles.txt}>Gerenciamento de Produtos</Text>
 
-        <View style={styles.row}>
-
-            <Button style={styles.button} title="Gerenciar Clientes" color="#e0683a"/>
-            <Button style={styles.button} title="Gerenciar Produtos" color="#e0683a" onPress={() => navigation.navigate('GerenciarProduto')}/>
-            <Button style={styles.button} title="Controle de Vendas" color="#e0683a"/>
-
-        </View>
+        <Button style={styles.button} title="Adicionar Produto" color="#e0683a" onPress={() => navigation.navigate('AddProdutos')}/>
 
     </View>
   );

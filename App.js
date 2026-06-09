@@ -6,8 +6,15 @@ import Entypo from '@expo/vector-icons/Entypo';
 import Login from './Screens/Login'
 import Home from './Screens/Home'
 import Catalog from "./Screens/Catalog";
+<<<<<<< Updated upstream
 import ADM from "./Screens/ADM";
 import AddProdutos from "./Screens/Addproduct";
+=======
+import ADM from "./Screens/adm";
+import GerenciarProduto from "./Screens/GerenciarProduto";
+import AddProdutos from "./Screens/AddProduto";
+
+>>>>>>> Stashed changes
 
 function TabNavigate(){
   const Tab = createBottomTabNavigator();
@@ -32,6 +39,11 @@ export default function App(){
       <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name="Login" component={Login}/>
+<<<<<<< Updated upstream
+=======
+            <Stack.Screen name="ADM" component={ADM}/>
+            <Stack.Screen name="GerenciarProduto" component={GerenciarProduto}/>
+>>>>>>> Stashed changes
             <Stack.Screen name="AddProdutos" component={AddProdutos}/>
             <Stack.Screen name="Catalog" component={TabNavigate} options={{
           headerShown: false}} />
