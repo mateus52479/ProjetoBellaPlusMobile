@@ -9,6 +9,7 @@ import {
   signInWithEmailAndPassword
 } from "firebase/auth";
 import Entypo from '@expo/vector-icons/Entypo';
+import Cadastrar from "./Cadastrar";
 
 
 const abrirInstagram = async () => {
@@ -26,21 +27,8 @@ const abrirInstagram = async () => {
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
 
-
-  const CriarConta = () => {
-    createUserWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
-        console.log('Usuário criado com sucesso!');
-        const user = userCredential.user;
-        console.log(user);
-        navigation.navigate('ADM');
-      })
-      .catch((error) => {
-        console.log(error);
-        Alert.alert(error.message);
-      });
-  }
 
   const EntrarConta = () => {
     signInWithEmailAndPassword(auth, email, senha)
@@ -67,11 +55,30 @@ export default function Login({ navigation }) {
 
     <Text style={styles.txt}>Bella plus Mulherão</Text>
     <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail}/>
-    <TextInput style={styles.barra} placeholder='Senha' value={senha} onChangeText={setSenha} secureTextEntry={true}/>
-    <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={CriarConta}>Cadastrar</Button>
+
+    <View style={styles.senha}>
+      <TextInput  style={styles.input}  placeholder='Senha' value={senha} onChangeText={setSenha} secureTextEntry={!mostrarSenha}/>
+      <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
+      <Entypo
+        name={mostrarSenha ? "eye-with-line" : "eye"}
+        size={24}
+        color="#666"
+      />
+  </TouchableOpacity>
+    </View>
+    
+    
     <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={EntrarConta}>Entrar</Button>
   
   
+
+
+  <TouchableOpacity  onPress={() => navigation.navigate('cadastrar')}>
+    <Text>Não possui uma conta ainda?<Text style={styles.cadastro}> Cadastre-se</Text></Text>
+  </TouchableOpacity>
+
+
+
   <View style={styles.footer}>
   <TouchableOpacity  style={styles.instagramContainer} onPress={abrirInstagram}>
     <Entypo name="instagram-with-circle" size={24} color="#f9b659"/>
@@ -141,5 +148,29 @@ overlay: {
   justifyContent: 'center',
   alignItems: 'center',
   backgroundColor: 'rgba(0,0,0,0.35)',
+},
+cadastro:{
+  fontWeight: 'bold',
+    fontStyle: 'italic',
+    color: '#f9b659',
+    
+},
+input: {
+  flex: 1,
+  paddingVertical: 12,
+  color: '#333',
+},
+senha:{
+  width: 280,
+  paddingHorizontal: 12,
+  borderRadius: 12,
+  marginVertical: 8,
+  backgroundColor: 'rgba(255, 255, 255, 0.73)',
+  borderWidth: 1,
+  borderColor: '#FFFFFF',
+  alignSelf: 'center',
+  flexDirection: 'row',
+  alignItems: 'center',
+  
 }
 });

@@ -9,6 +9,7 @@ import ADM from "./Screens/adm";
 import GerenciarProduto from "./Screens/GerenciarProduto";
 import AddProdutos from "./Screens/AddProduto";
 import Pagamento from "./Screens/Pagamento";
+import Cadastrar from "./Screens/Cadastrar";
 
 
 function TabNavigate(){
@@ -41,7 +42,10 @@ export default function App(){
   return(
       <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen name="Login" component={Login}/>
+            <Stack.Screen name="Login" component={Login} options={{
+          headerShown: false}}/>
+            <Stack.Screen name="cadastrar" component={Cadastrar}  options={{
+          headerShown: false}}/>
             <Stack.Screen name="ADM" component={ADM}/>
             <Stack.Screen name="GerenciarProduto" component={GerenciarProduto}/>
             <Stack.Screen name="AddProdutos" component={AddProdutos}/>
