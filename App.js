@@ -5,6 +5,9 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 import Login from './Screens/Login'
 import Catalog from "./Screens/Catalog";
+import ADM from "./Screens/adm";
+import GerenciarProduto from "./Screens/GerenciarProduto";
+import AddProdutos from "./Screens/AddProduto";
 import Pagamento from "./Screens/Pagamento";
 import Cadastrar from "./Screens/Cadastrar";
 
@@ -43,6 +46,9 @@ export default function App(){
           headerShown: false}}/>
             <Stack.Screen name="cadastrar" component={Cadastrar}  options={{
           headerShown: false}}/>
+            <Stack.Screen name="ADM" component={ADM}/>
+            <Stack.Screen name="GerenciarProduto" component={GerenciarProduto}/>
+            <Stack.Screen name="AddProdutos" component={AddProdutos}/>
             <Stack.Screen name="Catalog" component={TabNavigate} options={{
           headerShown: false}} />
           <Stack.Screen name="Pagamento" component={TabNavigate} options={{

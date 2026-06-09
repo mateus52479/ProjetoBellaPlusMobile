@@ -2,8 +2,12 @@ import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Li
 
 import { Button } from "react-native-paper";
 import { useState } from "react";
-import {firebaseConfig,auth,createUserWithEmailAndPassword,signInWithEmailAndPassword} from "../firebaseConfig";
+import { auth } from "../firebaseConfig";
 
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from "firebase/auth";
 import Entypo from '@expo/vector-icons/Entypo';
 import Cadastrar from "./Cadastrar";
 
@@ -31,7 +35,13 @@ export default function Login({ navigation }) {
       .then((userCredential) => {
         const user = userCredential.user;
         console.log(user);
-        navigation.navigate('Catalog');
+
+        if(email == "admin@gmail.com" && senha == "1234567"){
+          navigation.navigate('ADM');
+        }else{
+          navigation.navigate('Catalog');
+        }
+        
       })
       .catch((error) => {
         console.log(error);

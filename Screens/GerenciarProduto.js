@@ -1,0 +1,50 @@
+import {View, Text, TextInput, Button, Alert, StyleSheet} from 'react-native';
+import { database } from '../firebaseConfig';
+import {useState} from 'react';
+
+import { addDoc, collection } from 'firebase/firestore';
+
+export default function GerenciarProduto({navigation}) {
+
+  return (
+
+    <View style={styles.container}>
+        <Text style={styles.txt}>Gerenciamento de Produtos</Text>
+
+        <Button style={styles.button} title="Adicionar Produto" color="#e0683a" onPress={() => navigation.navigate('AddProdutos')}/>
+
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+
+  txt: {
+    fontSize: 33,
+    fontWeight: 'bold',
+    fontStyle: 'normal',
+    color: '#e0683a',
+    textAlign: 'center',
+    marginBottom: 40,
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#000000ff',
+  },
+
+    button: {
+    margin: 10,
+  },
+    row: {
+
+    padding: 10,
+    gap: 43,
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    }
+});
