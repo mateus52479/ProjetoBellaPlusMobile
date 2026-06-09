@@ -1,7 +1,23 @@
-import {TextInput, Text, StyleSheet, Alert, ImageBackground, View } from "react-native";
+import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking} from "react-native";
+
 import { Button } from "react-native-paper";
 import { useState } from "react";
-import {firebaseConfig, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword} from "../firebaseConfig";
+import {firebaseConfig,auth,createUserWithEmailAndPassword,signInWithEmailAndPassword} from "../firebaseConfig";
+
+import Entypo from '@expo/vector-icons/Entypo';
+
+
+const abrirInstagram = async () => {
+  const url = 'https://www.instagram.com/bellaplusmulherao/';
+
+  const supported = await Linking.canOpenURL(url);
+
+  if (supported) {
+    await Linking.openURL(url);
+  } else {
+    Alert.alert('Não foi possível abrir o Instagram');
+  }
+};
 
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
@@ -37,41 +53,41 @@ export default function Login({ navigation }) {
 
   return (
     <ImageBackground style={styles.fundo} source={require('../Images/roupa.png')} resizeMode='cover'>
-      <View>
-              <Text style={styles.txt}> Bella plus Mulherão</Text>
-      
-      <TextInput 
-      style={styles.barra} 
-      placeholder='Usuario' 
-      value={email} 
-      onChangeText={setEmail}
-      />
-      
-      <TextInput 
-      style={styles.barra} 
-      placeholder='Senha' 
-      value={senha}
-      onChangeText={setSenha}
-      secureTextEntry={true} 
-      />
+  <View style={styles.overlay}>
 
-      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={CriarConta}>Cadastrar</Button>
-      <Button style={styles.button} buttonColor='#5c3e06ff' mode='contained' onPress={EntrarConta}>Entrar</Button>
-      </View>
+    <Text style={styles.txt}>Bella plus Mulherão</Text>
+    <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail}/>
+    <TextInput style={styles.barra} placeholder='Senha' value={senha} onChangeText={setSenha} secureTextEntry={true}/>
+    <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={CriarConta}>Cadastrar</Button>
+    <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={EntrarConta}>Entrar</Button>
+  
+  
+  <View style={styles.footer}>
+  <TouchableOpacity  style={styles.instagramContainer} onPress={abrirInstagram}>
+    <Entypo name="instagram-with-circle" size={24} color="#f9b659"/>
+    <Text style={styles.instagramText}>@bellaplusmulherao</Text>
+  </TouchableOpacity>
+  </View>
 
-    </ImageBackground>
+  </View>
+
+  
+</ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
 
   barra: {
-    borderColor: '#613b01ff',
-    borderWidth: 1,
-    padding: 5,
-    color:'#291c03ff',
-    borderRadius: 10,
-    width: 170
+   width: 280,
+   padding: 12,
+   borderRadius: 12,
+   marginVertical: 8,
+   backgroundColor: 'rgba(255, 255, 255, 0.73)',
+   borderWidth: 1,
+   borderColor: '#FFFFFF',
+   color: '#333',
+   alignSelf: 'center',
   },
   button: {
     margin: 10,
@@ -82,6 +98,38 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   txt: {
-    fontStyle: 'italic'
-  }
+    fontSize: 36,
+    fontWeight: 'bold',
+    fontStyle: 'italic',
+    color: '#f9b659',
+    textAlign: 'center',
+    marginBottom: 40,
+    textShadowColor: 'rgba(0,0,0,0.7)',
+    textShadowOffset: { width: 2, height: 2 },
+    textShadowRadius: 5,
+  },
+  footer: {
+    position: 'absolute',
+    bottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+},
+
+instagramText: {
+  marginLeft: 8,
+  fontSize: 16,
+  fontWeight: 'bold',
+  color: '#f1af34',
+},
+instagramContainer: {
+  flexDirection: 'row',
+  alignItems: 'center',
+},
+overlay: {
+  flex: 1,
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0,0,0,0.35)',
+}
 });
