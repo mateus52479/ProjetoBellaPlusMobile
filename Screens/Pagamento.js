@@ -8,19 +8,19 @@ export default function Pagamento(){
     return(
     <View style={styles.container}>
         <Text style={styles.titulo}>Pagamento</Text>
-        <TextInput style={styles.input} placeholder="nome"/>
-        <TextInput style={styles.input} placeholder="endereço"/>
-        <TextInput style={styles.input} placeholder="produto"/>
+        <TextInput style={styles.input} placeholder="Nome" placeholderTextColor="#c34e77"  />
+        <TextInput style={styles.input} placeholder="Endereço" placeholderTextColor="#c34e77"/>
+        <TextInput style={styles.input} placeholder="Produto" placeholderTextColor="#c34e77"/>
         
 
         <View style={styles.pickerContainer}>
-            <Picker  style={styles.picker} dropdownIconColor="#f9b659"
+            <Picker  style={styles.picker} dropdownIconColor="#c34e77"
                 // selectedValue={formaPagamento}
                 // onValueChange={(itemValue) => setFormaPagamento(itemValue)}
 >
-                <Picker.Item label="Pix" value="pix" />
-                <Picker.Item label="Cartão" value="cartao" />
-                <Picker.Item label="Dinheiro" value="dinheiro" />
+                <Picker.Item label="Pix" value="pix"  color="#c34e77"/>
+                <Picker.Item label="Cartão" value="cartao" color="#c34e77" />
+                <Picker.Item label="Dinheiro" value="dinheiro"  color="#c34e77"/>
                 </Picker>
         </View>
     </View>
@@ -32,7 +32,7 @@ container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#d8d4d4ff',
+    backgroundColor: '#eadde1',
     padding: 24,
   },
 input: {
@@ -42,13 +42,17 @@ input: {
     padding: 12,
     fontSize: 16,
     marginBottom: 12,
+    borderColor:'#e58aaa'
+    
     
   },
 titulo: {
-    fontSize: 38,
+    fontSize: 36,
     fontWeight: 'bold',
-    color: '#f9b659',
-    marginBottom: 24,
+    fontStyle: 'italic',
+    color: '#e58aaa',
+    textAlign: 'center',
+    marginBottom: 40,
     textShadowColor: 'rgba(0,0,0,0.7)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
@@ -64,6 +68,8 @@ pickerContainer: {
 picker: {
   width: '100%',
   height: 50,
+  color: '#c34e77'
+  
 },
 
 })

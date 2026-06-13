@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking,} from "react-native";
+import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking,Image} from "react-native";
 
 import { Button } from "react-native-paper";
 import Entypo from "@expo/vector-icons/Entypo";
@@ -23,8 +23,8 @@ export default function Cadastrar({ navigation }) {
   const [senha, setSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
-  const [mostrarSenha, setMostrarSenha] = useState(false);
-  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(true);
+  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(true);
 
   const CriarConta = async () => {
     if (!email || !senha || !confirmarSenha) {
@@ -50,48 +50,48 @@ export default function Cadastrar({ navigation }) {
   };
 
   return (
-    <ImageBackground source={require("../Images/roupa.png")} style={styles.fundo} resizeMode="cover">
+    <ImageBackground source={require("../Images/roupa2.png")} style={styles.fundo} resizeMode="cover">
       <View style={styles.overlay}>
-        <Text style={styles.titulo}>Bella Plus Mulherão</Text>
+
+
+       <View style={styles.logoContainer}>
+           <Image style={styles.img}  source={require('../Images/logo.png')}/>
+      </View>
 
         <TextInput style={styles.barra} placeholder="E-mail" placeholderTextColor="#666" value={email} onChangeText={setEmail} keyboardType="email-address" autoCapitalize="none"/>
 
         <View style={styles.inputSenha}>
-          <TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#666" value={senha} onChangeText={setSenha} secureTextEntry={!mostrarSenha}/>
+          <TextInput style={styles.input} placeholder="Senha" placeholderTextColor="#666" value={senha} onChangeText={setSenha} secureTextEntry={mostrarSenha}/>
+          
 
           <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
             <Entypo
               name={mostrarSenha ? "eye-with-line" : "eye"}
               size={24}
-              color="#666"
+              color="#e58aaa"
             />
           </TouchableOpacity>
         </View>
 
         <View style={styles.inputSenha}>
-          <TextInput style={styles.input} placeholder="Confirmar senha" placeholderTextColor="#666" value={confirmarSenha}  onChangeText={setConfirmarSenha} secureTextEntry={!mostrarConfirmacao}/>
-
-          <TouchableOpacity
-            onPress={() =>
-              setMostrarConfirmacao(!mostrarConfirmacao)
-            }
-          >
+          <TextInput style={styles.input} placeholder="Confirmar senha" placeholderTextColor="#666" value={confirmarSenha}  onChangeText={setConfirmarSenha} secureTextEntry={mostrarConfirmacao}/>
+          <TouchableOpacity onPress={() => setMostrarConfirmacao(!mostrarConfirmacao) }>
             <Entypo
               name={mostrarConfirmacao ? "eye-with-line" : "eye"}
               size={24}
-              color="#666"
+              color="#e58aaa"
             />
           </TouchableOpacity>
         </View>
 
-        <Button mode="contained" buttonColor="#f9b659" textColor="#5C3E06" style={styles.botao} onPress={CriarConta}>Cadastrar</Button>
+        <Button mode="contained" buttonColor="#e58aaa" textColor="#8b3151" style={styles.botao} onPress={CriarConta}>Cadastrar</Button>
 
         <View style={styles.footer}>
           <TouchableOpacity style={styles.instagramContainer} onPress={abrirInstagram}>
             <Entypo
               name="instagram-with-circle"
               size={24}
-              color="#f9b659"
+              color="#e58aaa"
             />
             <Text style={styles.instagramText}> @bellaplusmulherao </Text>
           </TouchableOpacity>
@@ -104,21 +104,38 @@ export default function Cadastrar({ navigation }) {
 const styles = StyleSheet.create({
   fundo: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 1280,
+    height: 700
   },
+logoContainer: {
+     width: '100%',
+  height: 160,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 20,
+},
 
+img:{
+ width: 650,
+  height: 280,
+  resizeMode: 'contain',
+  pointerEvents: 'none',
+},
   overlay: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "rgba(0,0,0,0.35)",
-    paddingHorizontal: 20,
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0,0,0,0.35)',
   },
 
   titulo: {
     fontSize: 34,
     fontWeight: "bold",
     fontStyle: "italic",
-    color: "#f9b659",
+    color: "#e58aaa",
     textAlign: "center",
     marginBottom: 40,
     textShadowColor: "rgba(0,0,0,0.7)",
@@ -169,7 +186,7 @@ const styles = StyleSheet.create({
 
   instagramText: {
     marginLeft: 8,
-    color: "#f9b659",
+    color: "#e58aaa",
     fontWeight: "bold",
     fontSize: 16,
   },

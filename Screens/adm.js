@@ -1,4 +1,5 @@
-import {View, Text, TextInput, Button, Alert, StyleSheet} from 'react-native';
+import {View, Text, TextInput, Alert, StyleSheet} from 'react-native';
+import { Button } from "react-native-paper";
 import { database } from '../firebaseConfig';
 import {useState} from 'react';
 
@@ -13,9 +14,9 @@ export default function ADM({navigation}) {
 
         <View style={styles.row}>
 
-            <Button style={styles.button} title="Gerenciar Clientes" color="#e0683a"/>
-            <Button style={styles.button} title="Gerenciar Produtos" color="#e0683a" onPress={() => navigation.navigate('GerenciarProduto')}/>
-            <Button style={styles.button} title="Controle de Vendas" color="#e0683a"/>
+          <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' >Gerenciar Clientes</Button>
+          <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained'onPress={() => navigation.navigate('GerenciarProduto')} >Gerenciar Produtos</Button>
+          <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' >Controle de Vendas</Button>
 
         </View>
 
@@ -26,12 +27,13 @@ export default function ADM({navigation}) {
 const styles = StyleSheet.create({
 
   txt: {
-    fontSize: 33,
+     fontSize: 36,  
     fontWeight: 'bold',
-    fontStyle: 'normal',
-    color: '#e0683a',
+    fontStyle: 'italic',
+    color: '#8b3151',
     textAlign: 'center',
     marginBottom: 40,
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
   },
@@ -40,11 +42,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#000000ff',
+    backgroundColor: '#290814',
   },
 
     button: {
-    margin: 10,
+    margin: 2,
   },
     row: {
 
