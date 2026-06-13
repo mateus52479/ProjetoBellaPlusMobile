@@ -1,4 +1,5 @@
-import {View, Text, TextInput, Button, Alert, StyleSheet} from 'react-native';
+import {View, Text, TextInput, Alert, StyleSheet} from 'react-native';
+import { Button } from "react-native-paper";
 import { database } from '../firebaseConfig';
 import {useState} from 'react';
 
@@ -32,49 +33,15 @@ export default function AddProdutos() {
     return(
         <View style={styles.container}>
 
-            <Text style={styles.txt}>ADICIONAR PRODUTOS</Text>
-            <TextInput
-            style={styles.barra}
-            placeholder="Nome"
-            value={nome}
-            onChangeText={setNome}
-            />
-
-            <TextInput
-            style={styles.barra}
-            placeholder="Tamanho"
-            value={tamanho}
-            onChangeText={setTamanho}
-            />
-
-            <TextInput
-            style={styles.barra}
-            placeholder="Valor"
-            value={valor}
-            onChangeText={setValor}
-            />
-
-            <TextInput
-            style={styles.barra}
-            placeholder="Descrição"
-            value={descricao}
-            onChangeText={setDescricao}
-            />
-
-            <TextInput
-            style={styles.barra}
-            placeholder="URL da imagem"
-            value={imagem}
-            onChangeText={setImagem}
-            />
+            <Text style={styles.txt}>Adicionar Produtos</Text>
+            <TextInput style={styles.barra} placeholder="Nome" value={nome} onChangeText={setNome} placeholderTextColor={'#8b3151'}/>
+            <TextInput style={styles.barra} placeholder="Tamanho" value={tamanho} onChangeText={setTamanho} placeholderTextColor={'#8b3151'}/>
+            <TextInput style={styles.barra} placeholder="Valor" value={valor} onChangeText={setValor} placeholderTextColor={'#8b3151'}/>
+            <TextInput style={styles.barra} placeholder="Descrição" value={descricao} onChangeText={setDescricao} placeholderTextColor={'#8b3151'}/>
+            <TextInput style={styles.barra} placeholder="URL da imagem" value={imagem} onChangeText={setImagem} placeholderTextColor={'#8b3151'}/>
 
             <View style={styles.row}>
-
-                
-                <Button title="Cadastrar Produto"
-                    color="#3e6925ff"
-                    onPress={CadastrarProdutos}
-                />
+                <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' onPress={CadastrarProdutos} >Cadastrar Produto</Button>
             </View>
 
         </View>
@@ -84,12 +51,13 @@ export default function AddProdutos() {
 const styles = StyleSheet.create({
 
   txt: {
-    fontSize: 25,
+    fontSize: 36,  
     fontWeight: 'bold',
-    fontStyle: 'normal',
-    color: '#e0683a',
+    fontStyle: 'italic',
+    color: '#8b3151',
     textAlign: 'center',
     marginBottom: 40,
+    textShadowColor: 'rgba(0, 0, 0, 0.7)',
     textShadowOffset: { width: 2, height: 2 },
     textShadowRadius: 5,
   },
@@ -102,17 +70,15 @@ const styles = StyleSheet.create({
   },
 
     button: {
-    margin: 10,
+    margin: 2,
   },
     row: {
-
     padding: 10,
     gap: 43,
     flexDirection: 'column',
     justifyContent: 'space-around',
     },
     barra: {
-
     width: 280,
     padding: 12,
     borderRadius: 12,
@@ -120,7 +86,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.73)',
     borderWidth: 1,
     borderColor: '#FFFFFF',
-    color: '#333',
     alignSelf: 'center',
   },
 });

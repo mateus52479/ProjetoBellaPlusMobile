@@ -1,13 +1,10 @@
-import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking} from "react-native";
+import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking, Image} from "react-native";
 
 import { Button } from "react-native-paper";
 import { useState } from "react";
 import { auth } from "../firebaseConfig";
 
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
-} from "firebase/auth";
+import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
 import Entypo from '@expo/vector-icons/Entypo';
 import Cadastrar from "./Cadastrar";
 
@@ -27,7 +24,7 @@ const abrirInstagram = async () => {
 export default function Login({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
-  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarSenha, setMostrarSenha] = useState(true);
 
 
   const EntrarConta = () => {
@@ -50,25 +47,27 @@ export default function Login({ navigation }) {
   }
 
   return (
-    <ImageBackground style={styles.fundo} source={require('../Images/roupa.png')} resizeMode='cover'>
+    <ImageBackground style={styles.fundo} source={require('../Images/roupa2.png')} resizeMode='cover'>
   <View style={styles.overlay}>
 
-    <Text style={styles.txt}>Bella plus Mulherão</Text>
-    <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail}/>
+    <View style={styles.logoContainer}>
+    <Image style={styles.img}  source={require('../Images/logo.png')} pointerEvents="none"/>
+    </View>
+    <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail} />
 
     <View style={styles.senha}>
-      <TextInput  style={styles.input}  placeholder='Senha' value={senha} onChangeText={setSenha} secureTextEntry={!mostrarSenha}/>
+      <TextInput  style={styles.input}  placeholder='Senha' value={senha} onChangeText={setSenha} secureTextEntry={mostrarSenha}/>
       <TouchableOpacity onPress={() => setMostrarSenha(!mostrarSenha)}>
       <Entypo
         name={mostrarSenha ? "eye-with-line" : "eye"}
         size={24}
-        color="#666"
+        color="#e58aaa"
       />
   </TouchableOpacity>
     </View>
     
     
-    <Button style={styles.button} buttonColor="#f9b659" textColor="#5C3E06" mode='contained' onPress={EntrarConta}>Entrar</Button>
+    <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' onPress={EntrarConta}>Entrar</Button>
   
   
 
@@ -81,7 +80,7 @@ export default function Login({ navigation }) {
 
   <View style={styles.footer}>
   <TouchableOpacity  style={styles.instagramContainer} onPress={abrirInstagram}>
-    <Entypo name="instagram-with-circle" size={24} color="#f9b659"/>
+    <Entypo name="instagram-with-circle" size={24} color="#e58aaa"/>
     <Text style={styles.instagramText}>@bellaplusmulherao</Text>
   </TouchableOpacity>
   </View>
@@ -96,7 +95,7 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
 
   barra: {
-   width: 280,
+    width: 280,
    padding: 12,
    borderRadius: 12,
    marginVertical: 8,
@@ -105,26 +104,32 @@ const styles = StyleSheet.create({
    borderColor: '#FFFFFF',
    color: '#333',
    alignSelf: 'center',
+
+   zIndex: 10,
   },
   button: {
     margin: 10,
   },
   fundo: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center'
+  justifyContent: 'center',
+  alignItems: 'center',
   },
-  txt: {
-    fontSize: 36,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
-    color: '#f9b659',
-    textAlign: 'center',
-    marginBottom: 40,
-    textShadowColor: 'rgba(0,0,0,0.7)',
-    textShadowOffset: { width: 2, height: 2 },
-    textShadowRadius: 5,
-  },
+  
+  logoContainer: {
+    width: '100%',
+  height: 160,
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: 20,
+},
+
+img:{
+ width: 650,
+  height: 280,
+  resizeMode: 'contain',
+  pointerEvents: 'none',
+},
   footer: {
     position: 'absolute',
     bottom: 20,
@@ -136,14 +141,14 @@ instagramText: {
   marginLeft: 8,
   fontSize: 16,
   fontWeight: 'bold',
-  color: '#f1af34',
+  color: '#e58aaa',
 },
 instagramContainer: {
   flexDirection: 'row',
   alignItems: 'center',
 },
 overlay: {
-  flex: 1,
+   flex: 1,
   width: '100%',
   justifyContent: 'center',
   alignItems: 'center',
@@ -152,7 +157,7 @@ overlay: {
 cadastro:{
   fontWeight: 'bold',
     fontStyle: 'italic',
-    color: '#f9b659',
+    color: '#e58aaa',
     
 },
 input: {
@@ -171,6 +176,7 @@ senha:{
   alignSelf: 'center',
   flexDirection: 'row',
   alignItems: 'center',
-  
+
+  zIndex: 10,
 }
 });

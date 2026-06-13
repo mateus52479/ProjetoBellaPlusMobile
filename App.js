@@ -20,7 +20,7 @@ function TabNavigate(){
         options={{
           headerShown: false,
           tabBarIcon: () => (
-          <Entypo name="globe" size={20} color='rgb(144, 143, 143)' />
+          <Entypo name="globe" size={20} color='#8b3151' />
           )
           }}/>
 
@@ -28,7 +28,8 @@ function TabNavigate(){
           options={{
           headerShown: false,
           tabBarIcon: () => (
-          <Entypo name="globe" size={20} color='rgb(144, 143, 143)' />
+          
+          <Entypo name="credit-card" size={20} color="#8b3151" />
           )
           }}/>
         
@@ -42,17 +43,23 @@ export default function App(){
   return(
       <NavigationContainer>
           <Stack.Navigator>
+            
             <Stack.Screen name="Login" component={Login} options={{
           headerShown: false}}/>
             <Stack.Screen name="cadastrar" component={Cadastrar}  options={{
           headerShown: false}}/>
-            <Stack.Screen name="ADM" component={ADM}/>
-            <Stack.Screen name="GerenciarProduto" component={GerenciarProduto}/>
-            <Stack.Screen name="AddProdutos" component={AddProdutos}/>
+          <Stack.Screen name="ADM" component={ADM}options={{
+          headerShown: false}}/>
+          <Stack.Screen name="GerenciarProduto" component={GerenciarProduto} options={{
+          headerShown: false}}/>
+          <Stack.Screen name="AddProdutos" component={AddProdutos} options={{
+          headerShown: false}}/>
             <Stack.Screen name="Catalog" component={TabNavigate} options={{
           headerShown: false}} />
           <Stack.Screen name="Pagamento" component={TabNavigate} options={{
           headerShown: false}} />
+          
+          
           </Stack.Navigator>
       </NavigationContainer>
   )

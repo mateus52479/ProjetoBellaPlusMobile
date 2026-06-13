@@ -17,26 +17,12 @@ export default function Catalog() {
       {/* LISTA DOS PRODUTOS */}
       <FlatList data={products} numColumns={2} keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-
-          <ProductCard
-            product={item}
-
-            // Quando clicar:
-            onPress={setSelectedProduct}
-          />
-
-        )}
-      />
+          <ProductCard product={item} onPress={setSelectedProduct}/>
+          
+          )}/>
 
       {/* MODAL */}
-      <ProductModal
-        product={selectedProduct}
-
-        visible={selectedProduct !== null}
-
-        onClose={() => setSelectedProduct(null)}
-      />
-
+      <ProductModal product={selectedProduct} visible={selectedProduct !== null} onClose={() => setSelectedProduct(null)}/>
     </View>
   );
 }
@@ -44,9 +30,10 @@ export default function Catalog() {
 const styles = StyleSheet.create({
 
   container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingTop: 50,
+    flex:1,
+    backgroundColor:"#fff7fa",
+    paddingTop:50,
+    paddingHorizontal:5,
   },
 
 });
