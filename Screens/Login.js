@@ -73,7 +73,7 @@ export default function Login({ navigation }) {
 
 
   <TouchableOpacity  onPress={() => navigation.navigate('cadastrar')}>
-    <Text>Não possui uma conta ainda?<Text style={styles.cadastro}> Cadastre-se</Text></Text>
+    <Text style={styles.textoConta}>Não possui uma conta ainda?<Text style={styles.cadastro}> Cadastre-se</Text></Text>
   </TouchableOpacity>
 
 
@@ -154,9 +154,11 @@ overlay: {
   alignItems: 'center',
   backgroundColor: 'rgba(0,0,0,0.35)',
 },
+textoConta: {
+  color: '#FFFFFF',
+},
 cadastro:{
   fontWeight: 'bold',
-    fontStyle: 'italic',
     color: '#e58aaa',
     
 },
