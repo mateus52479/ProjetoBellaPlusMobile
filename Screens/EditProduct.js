@@ -2,19 +2,18 @@ import { View, Text, TextInput, StyleSheet, Image, Alert } from 'react-native';
 import { Button } from "react-native-paper";
 import { database } from '../firebaseConfig';
 import { useState } from 'react';
-import { addDoc, collection } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
 import { Picker } from '@react-native-picker/picker';
-// Utilizamos o Imagem Picker para não precisar ficar colocando a url toda hora, no celular fica ruim demais assim
-// - Carlos
 
-export default function AddProdutos({ navigation, route }) {
-    const { aoSalvar } = route.params || {};
-    const [nome, setNome] = useState('');
-    const [valor, setValor] = useState('');
-    const [tamanho, setTamanho] = useState('');
-    const [descricao, setDescricao] = useState('');
-    const [imagem, setImagem] = useState(null);
+export default function EditProduct({ navigation, route }) {
+    const { produto, aoSalvar } = route.params;
+    
+    const [nome, setNome] = useState(produto.nome);
+    const [tamanho, setTamanho] = useState(produto.tamanho);
+    const [valor, setValor] = useState(String(produto.valor));
+    const [descricao, setDescricao] = useState(produto.descricao);
+    const [imagem, setImagem] = useState(produto.imagem);
 
     const escolherImagem = async () => {
         let resultado = await ImagePicker.launchImageLibraryAsync({
@@ -31,11 +30,11 @@ export default function AddProdutos({ navigation, route }) {
         }
     };
 
-    const CadastrarProdutos = async () => {
+    const Salvar = async () => {
         try {
-            let imagemBase64 = null;
+            let imagemBase64 = imagem;
 
-            if (imagem) {
+            if (imagem && imagem.startsWith('file://')) {
                 const response = await fetch(imagem);
                 const blob = await response.blob();
                 imagemBase64 = await new Promise((resolve) => {
@@ -45,15 +44,16 @@ export default function AddProdutos({ navigation, route }) {
                 });
             }
 
-            await addDoc(collection(database, 'produtos'), {
+            const produtoRef = doc(database, 'produtos', produto.id);
+            await updateDoc(produtoRef, {
                 nome,
-                valor: parseFloat(valor),
-                imagem: imagemBase64,
                 tamanho,
-                descricao
+                valor: parseFloat(valor),
+                descricao,
+                imagem: imagemBase64
             });
-
-            Alert.alert('Sucesso', 'Produto Cadastrado com sucesso!', [
+            
+            Alert.alert('Sucesso', 'Produto atualizado com sucesso!', [
                 {
                     text: 'OK',
                     onPress: () => {
@@ -68,8 +68,8 @@ export default function AddProdutos({ navigation, route }) {
             ]);
 
         } catch (error) {
-            console.log('erro ao cadastrar', error);
-            Alert.alert('Erro', 'Não foi possível cadastrar o produto.');
+            console.log('erro ao atualizar', error);
+            Alert.alert('Erro', 'Não foi possível atualizar o produto.');
         }
     };
 
@@ -83,10 +83,10 @@ export default function AddProdutos({ navigation, route }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.txt}>Adicionar Produtos</Text>
-
+            <Text style={styles.txt}>Editar Produto</Text>
+            
             <TextInput style={styles.barra} placeholder="Nome" value={nome} onChangeText={setNome} placeholderTextColor={'#e58aaa'} />
-
+            
             <View style={styles.barraPicker}>
                 <Picker
                     selectedValue={tamanho}
@@ -106,11 +106,11 @@ export default function AddProdutos({ navigation, route }) {
             <TextInput style={styles.barra} placeholder="Valor" value={valor} onChangeText={setValor} placeholderTextColor={'#e58aaa'} />
             <TextInput style={styles.barra} placeholder="Descrição" value={descricao} onChangeText={setDescricao} placeholderTextColor={'#e58aaa'} />
 
-            <Button
-                style={styles.GaleriaButton}
-                buttonColor="#8b3151"
-                textColor="#ffffff"
-                mode='contained'
+            <Button 
+                style={styles.GaleriaButton} 
+                buttonColor="#8b3151" 
+                textColor="#ffffff" 
+                mode='contained' 
                 onPress={escolherImagem}
             >
                 {renderizarTextoBotao()}
@@ -121,7 +121,7 @@ export default function AddProdutos({ navigation, route }) {
             )}
 
             <View style={styles.colunaBotoes}>
-                <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' onPress={CadastrarProdutos}>Cadastrar</Button>
+                <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' onPress={Salvar}>Salvar</Button>
                 <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' onPress={() => navigation.goBack()}>Voltar</Button>
             </View>
         </View>
@@ -130,8 +130,9 @@ export default function AddProdutos({ navigation, route }) {
 
 const styles = StyleSheet.create({
     txt: {
-        fontSize: 36,
+        fontSize: 36,  
         fontWeight: 'bold',
+        fontStyle: 'italic',
         color: '#e58aaa',
         textAlign: 'center',
         marginBottom: 30,
