@@ -5,13 +5,15 @@ import Entypo from '@expo/vector-icons/Entypo';
 
 import Login from './Screens/Login'
 import Catalog from "./Screens/Catalog";
+import Favorites from "./Screens/Favorites";
+import Cart from "./Screens/Cart";
 import ADM from "./Screens/adm";
 import GerenciarProduto from "./Screens/GerenciarProduto";
 import AddProdutos from "./Screens/AddProduto";
 import Pagamento from "./Screens/Pagamento";
 import Cadastrar from "./Screens/Cadastrar";
 import EditProduct from "./Screens/EditProduct";
-
+import { ProductProvider } from "./context/ProductContext";
 
 function TabNavigate() {
   const Tab = createBottomTabNavigator();
@@ -25,15 +27,21 @@ function TabNavigate() {
           )
         }} />
 
-      <Tab.Screen name="Pagamento" component={Pagamento}
+      <Tab.Screen name="Favoritos" component={Favorites}
         options={{
           headerShown: false,
           tabBarIcon: () => (
-
-            <Entypo name="credit-card" size={20} color="#8b3151" />
+            <Entypo name="heart" size={20} color='#8b3151' />
           )
         }} />
 
+      <Tab.Screen name="Carrinho" component={Cart}
+        options={{
+          headerShown: false,
+          tabBarIcon: () => (
+            <Entypo name="shopping-cart" size={20} color="#8b3151" />
+          )
+        }} />
     </Tab.Navigator>
   )
 }
@@ -42,46 +50,47 @@ export default function App() {
 
   const Stack = createStackNavigator();
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
+    <ProductProvider>
+      <NavigationContainer>
+        <Stack.Navigator>
 
-        <Stack.Screen name="Login" component={Login} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name="cadastrar" component={Cadastrar} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name="ADM" component={ADM} options={{
-          headerShown: false
-        }} />
+          <Stack.Screen name="Login" component={Login} options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="cadastrar" component={Cadastrar} options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="ADM" component={ADM} options={{
+            headerShown: false
+          }} />
 
-        <Stack.Screen
-          name="GerenciarProduto"
-          component={GerenciarProduto}
-          options={{
-            title: 'Gerenciar Produto',
-            headerStyle: {
-              backgroundColor: '#290814',
-            },
-            headerTintColor: '#8b3151',
-          }}
-        />
+          <Stack.Screen
+            name="GerenciarProduto"
+            component={GerenciarProduto}
+            options={{
+              title: 'Gerenciar Produto',
+              headerStyle: {
+                backgroundColor: '#290814',
+              },
+              headerTintColor: '#8b3151',
+            }}
+          />
 
-        <Stack.Screen name="AddProdutos" component={AddProdutos} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name="EditProduct" component={EditProduct} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name="Catalog" component={TabNavigate} options={{
-          headerShown: false
-        }} />
-        <Stack.Screen name="Pagamento" component={TabNavigate} options={{
-          headerShown: false
-        }} />
+          <Stack.Screen name="AddProdutos" component={AddProdutos} options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="EditProduct" component={EditProduct} options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="Catalog" component={TabNavigate} options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="Pagamento" component={Pagamento} options={{
+            headerShown: false
+          }} />
 
-
-      </Stack.Navigator>
-    </NavigationContainer>
+        </Stack.Navigator>
+      </NavigationContainer>
+    </ProductProvider>
   )
 }

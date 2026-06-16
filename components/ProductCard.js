@@ -1,14 +1,24 @@
 import { TouchableOpacity, Image, StyleSheet, View, Text } from "react-native";
 
 export default function ProductCard({ product, onPress }) {
-  return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress(product)}>
 
-      <Image source={product.image} style={styles.image}/>
+  const imageSource = product.imagem
+    ? { uri: product.imagem }
+    : product.image;
+
+  const nome = product.nome || product.name;
+  const preco = product.price
+    ? product.price
+    : `R$ ${Number(product.valor).toFixed(2).replace(".", ",")}`;
+
+  return (
+    <TouchableOpacity style={styles.card} activeOpacity={0.8} onPress={() => onPress({...product, nome, preco})}>
+
+      <Image source={imageSource} style={styles.image}/>
 
       <View style={styles.info}>
-        <Text style={styles.name}>{product.name}</Text>
-        <Text style={styles.price}>{product.price}</Text>
+        <Text style={styles.name}>{nome}</Text>
+        <Text style={styles.price}>{preco}</Text>
       </View>
 
     </TouchableOpacity>
