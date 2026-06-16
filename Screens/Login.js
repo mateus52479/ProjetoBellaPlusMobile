@@ -1,4 +1,4 @@
-import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking, Image} from "react-native";
+import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking, Image, useWindowDimensions} from "react-native";
 
 import { Button } from "react-native-paper";
 import { useState } from "react";
@@ -7,6 +7,10 @@ import { auth } from "../firebaseConfig";
 import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
 import Entypo from '@expo/vector-icons/Entypo';
 import Cadastrar from "./Cadastrar";
+
+const imagemDesktop = require("../Images/roupa2.png");
+const imagemMobile = require("../Images/roupa2Mobile.png");
+
 
 
 const abrirInstagram = async () => {
@@ -22,6 +26,13 @@ const abrirInstagram = async () => {
 };
 
 export default function Login({ navigation }) {
+ 
+  const {width,height}=useWindowDimensions();
+
+  const imagemFundo = width < 600
+    ? imagemMobile
+    : imagemDesktop;
+  
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mostrarSenha, setMostrarSenha] = useState(true);
@@ -46,12 +57,16 @@ export default function Login({ navigation }) {
       });
   }
 
+
+
   return (
-    <ImageBackground style={styles.fundo} source={require('../Images/roupa2.png')} resizeMode='cover'>
+ <ImageBackground source={imagemFundo} style={styles.fundo} resizeMode='stretch'>
   <View style={styles.overlay}>
 
     <View style={styles.logoContainer}>
-    <Image style={styles.img}  source={require('../Images/logo.png')} pointerEvents="none"/>
+    <Image style={{
+    width: width < 600 ? width * 0.90 : width * 0.55,
+    height: height < 600 ? 160 : 220,resizeMode:'contain'}} source={require('../Images/logo.png')} />
     </View>
     <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail} />
 
@@ -95,90 +110,85 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
 
   barra: {
-    width: 280,
-   padding: 12,
-   borderRadius: 12,
-   marginVertical: 8,
-   backgroundColor: 'rgba(255, 255, 255, 0.73)',
-   borderWidth: 1,
-   borderColor: '#FFFFFF',
-   color: '#333',
-   alignSelf: 'center',
-
-   zIndex: 10,
+    width: '80%',
+  maxWidth: 350,
+  padding:12,
+  borderRadius:12,
+  marginVertical:8,
+  backgroundColor:'rgba(255,255,255,0.73)',
+  borderWidth:1,
+  borderColor:'#FFFFFF',
+  color:'#333',
   },
+logoContainer:{
+  justifyContent:'center',
+  alignItems:'center',
+  marginBottom:20,
+},
   button: {
     margin: 10,
   },
-  fundo: {
-    flex: 1,
-  justifyContent: 'center',
-  alignItems: 'center',
-  },
-  
-  logoContainer: {
-    width: '100%',
-  height: 160,
-  justifyContent: 'center',
-  alignItems: 'center',
-  marginBottom: 20,
-},
 
-img:{
- width: 650,
-  height: 280,
-  resizeMode: 'contain',
-  pointerEvents: 'none',
-},
+  fundo: {
+    flex:1,
+  width:"100%",
+  height:"100%",
+  },
+
+
   footer: {
     position: 'absolute',
     bottom: 20,
     flexDirection: 'row',
     alignItems: 'center',
-},
+  },
 
-instagramText: {
-  marginLeft: 8,
-  fontSize: 16,
-  fontWeight: 'bold',
-  color: '#e58aaa',
-},
-instagramContainer: {
-  flexDirection: 'row',
-  alignItems: 'center',
-},
-overlay: {
-   flex: 1,
-  width: '100%',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(0,0,0,0.35)',
-},
-textoConta: {
-  color: '#FFFFFF',
-},
-cadastro:{
-  fontWeight: 'bold',
+  instagramText: {
+    marginLeft: 8,
+    fontSize: 16,
+    fontWeight: 'bold',
     color: '#e58aaa',
-    
-},
-input: {
-  flex: 1,
-  paddingVertical: 12,
-  color: '#333',
-},
-senha:{
-  width: 280,
-  paddingHorizontal: 12,
-  borderRadius: 12,
-  marginVertical: 8,
-  backgroundColor: 'rgba(255, 255, 255, 0.73)',
-  borderWidth: 1,
-  borderColor: '#FFFFFF',
-  alignSelf: 'center',
-  flexDirection: 'row',
-  alignItems: 'center',
+  },
 
-  zIndex: 10,
-}
+  instagramContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  overlay: {
+    flex: 1,
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.35)',
+  },
+
+  textoConta: {
+    color: '#FFFFFF',
+  },
+
+  cadastro:{
+    fontWeight: 'bold',
+    color: '#e58aaa',
+  },
+
+  input: {
+    flex: 1,
+    paddingVertical: 12,
+    color: '#333',
+  },
+
+  senha:{
+    width:'80%',
+  maxWidth:350,
+  paddingHorizontal:12,
+  borderRadius:12,
+  marginVertical:8,
+  backgroundColor:'rgba(255,255,255,0.73)',
+  borderWidth:1,
+  borderColor:'#FFFFFF',
+  flexDirection:'row',
+  alignItems:'center',
+  }
+
 });
