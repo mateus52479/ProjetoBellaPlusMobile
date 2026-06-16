@@ -1,4 +1,4 @@
-import { View, TextInput,StyleSheet, Text} from "react-native";
+import { View, TextInput,StyleSheet, Text, Image} from "react-native";
 import { Picker } from "@react-native-picker/picker";
 
 
@@ -23,6 +23,9 @@ export default function Pagamento(){
                 <Picker.Item label="Dinheiro" value="dinheiro"  color="#c34e77"/>
                 </Picker>
         </View>
+        <Image
+        source={require('../Images/qrcode-pix.png')}
+        />
     </View>
     );
 }
