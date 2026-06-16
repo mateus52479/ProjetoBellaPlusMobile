@@ -1,28 +1,52 @@
-import React, { useState } from "react";
-import {View,FlatList,StyleSheet,} from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, FlatList, StyleSheet, Text } from "react-native";
+import { collection, getDocs } from "firebase/firestore";
+import { database } from "../firebaseConfig";
 import ProductCard from "../components/ProductCard";
 import ProductModal from "../components/ProductModal";
 
-import { products } from "../data/products";
-
 export default function Catalog() {
 
-  // Guarda produto clicado
+  const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
+
+  async function carregarProdutos() {
+    try {
+      const querySnapshot = await getDocs(collection(database, "produtos"));
+      const lista = [];
+      querySnapshot.forEach((doc) => {
+        lista.push({ id: doc.id, ...doc.data() });
+      });
+      setProducts(lista);
+    } catch (error) {
+      console.log("Erro ao carregar produtos:", error);
+    }
+  }
+
+  useEffect(() => {
+    carregarProdutos();
+  }, []);
 
   return (
 
     <View style={styles.container}>
 
-      {/* LISTA DOS PRODUTOS */}
-      <FlatList data={products} numColumns={2} keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <ProductCard product={item} onPress={setSelectedProduct}/>
-          
-          )}/>
+      {products.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Nenhum produto cadastrado ainda</Text>
+        </View>
+      ) : (
+        <FlatList
+          data={products}
+          numColumns={2}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <ProductCard product={item} onPress={setSelectedProduct} />
+          )}
+        />
+      )}
 
-      {/* MODAL */}
-      <ProductModal product={selectedProduct} visible={selectedProduct !== null} onClose={() => setSelectedProduct(null)}/>
+      <ProductModal product={selectedProduct} visible={selectedProduct !== null} onClose={() => setSelectedProduct(null)} />
     </View>
   );
 }
@@ -34,6 +58,18 @@ const styles = StyleSheet.create({
     backgroundColor:"#fff7fa",
     paddingTop:50,
     paddingHorizontal:5,
+  },
+
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  emptyText: {
+    fontSize: 18,
+    color: "#8b3151",
+    fontStyle: "italic",
   },
 
 });
