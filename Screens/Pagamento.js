@@ -1,10 +1,20 @@
-import { View, TextInput,StyleSheet, Text, Image} from "react-native";
+import { View, TextInput,StyleSheet, Text, Image, Alert, TouchableOpacity} from "react-native";
 import { Picker } from "@react-native-picker/picker";
+import { useProducts } from "../context/ProductContext";
 
 
 
 
-export default function Pagamento(){
+export default function Pagamento({ navigation }){
+    const { clearCart } = useProducts();
+
+    function confirmarPagamento() {
+        clearCart();
+        Alert.alert("Sucesso", "Compra finalizada com sucesso!", [
+            { text: "OK", onPress: () => navigation.navigate("Catalog") }
+        ]);
+    }
+
     return(
     <View style={styles.container}>
         <Text style={styles.titulo}>Pagamento</Text>
@@ -26,6 +36,9 @@ export default function Pagamento(){
         <Image
         source={require('../Images/qrcode-pix.png')}
         />
+        <TouchableOpacity style={styles.confirmarButton} onPress={confirmarPagamento}>
+            <Text style={styles.confirmarText}>Confirmar Pagamento</Text>
+        </TouchableOpacity>
     </View>
     );
 }
@@ -73,6 +86,19 @@ picker: {
   height: 50,
   color: '#c34e77'
   
+},
+confirmarButton: {
+  width: '100%',
+  backgroundColor: '#8b3151',
+  padding: 16,
+  borderRadius: 30,
+  alignItems: 'center',
+  marginTop: 20,
+},
+confirmarText: {
+  color: '#fff',
+  fontSize: 18,
+  fontWeight: 'bold',
 },
 
 })
