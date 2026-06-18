@@ -1,5 +1,5 @@
 import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking, Image, useWindowDimensions} from "react-native";
-
+import { BlurView } from 'expo-blur';
 import { Button } from "react-native-paper";
 import { useState } from "react";
 import { auth } from "../firebaseConfig";
@@ -60,13 +60,16 @@ export default function Login({ navigation }) {
 
 
   return (
- <ImageBackground source={imagemFundo} style={styles.fundo} resizeMode='stretch'>
+ <ImageBackground source={imagemFundo} style={styles.fundo} resizeMode='cover'>
+
+
   <View style={styles.overlay}>
 
     <View style={styles.logoContainer}>
-    <Image style={{
-    width: width < 600 ? width * 0.90 : width * 0.55,
-    height: height < 600 ? 160 : 220,resizeMode:'contain'}} source={require('../Images/logo.png')} />
+   <Image style={{
+    width: width < 600 ? width * 1.05 : width * 1.05,
+    height: width < 600 ? 180 : 220,
+    resizeMode: 'contain'}} source={require('../Images/logo.png')} />
     </View>
     <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail} />
 
@@ -87,7 +90,7 @@ export default function Login({ navigation }) {
   
 
 
-  <TouchableOpacity  onPress={() => navigation.navigate('cadastrar')}>
+  <TouchableOpacity  onPress={() => navigation.navigate('Cadastrar')}>
     <Text style={styles.textoConta}>Não possui uma conta ainda?<Text style={styles.cadastro}> Cadastre-se</Text></Text>
   </TouchableOpacity>
 
@@ -101,8 +104,6 @@ export default function Login({ navigation }) {
   </View>
 
   </View>
-
-  
 </ImageBackground>
   );
 }
@@ -110,7 +111,7 @@ export default function Login({ navigation }) {
 const styles = StyleSheet.create({
 
   barra: {
-    width: '80%',
+  width: '80%',
   maxWidth: 350,
   padding:12,
   borderRadius:12,
@@ -121,9 +122,13 @@ const styles = StyleSheet.create({
   color:'#333',
   },
 logoContainer:{
-  justifyContent:'center',
+   justifyContent:'center',
   alignItems:'center',
-  marginBottom:20,
+  marginBottom:0,
+  marginTop:-20,
+},
+blur:{
+  flex:1,
 },
   button: {
     margin: 10,
@@ -156,11 +161,12 @@ logoContainer:{
   },
 
   overlay: {
-    flex: 1,
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.35)',
+  flex: 1,
+  width: '100%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  paddingBottom: 40,
+  backgroundColor: 'rgba(0,0,0,0.35)',
   },
 
   textoConta: {

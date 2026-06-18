@@ -146,14 +146,14 @@ const styles = StyleSheet.create({
 
   actionButton: {
     flex: 1,
-    backgroundColor: "#8b3151",
+    backgroundColor: "#e58aaa",
     padding: 14,
     borderRadius: 30,
     alignItems: "center",
   },
 
   actionButtonActive: {
-    backgroundColor: "#e58aaa",
+    backgroundColor: "#8b3151",
   },
 
   actionButtonText: {
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
   },
 
   closeButton: {
-    backgroundColor: "#e58aaa",
+    backgroundColor: "#b34a6fff",
     padding: 16,
     borderRadius: 30,
     marginTop: 20,

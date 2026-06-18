@@ -54,27 +54,33 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
 
+
+
           <Stack.Screen name="Login" component={Login} options={{
             headerShown: false
           }} />
-          <Stack.Screen name="cadastrar" component={Cadastrar} options={{
-            headerShown: false
-          }} />
+          
+          <Stack.Screen name="Cadastrar" component={Cadastrar} options={{
+          title: "Cadastrar",
+          headerTransparent: true,
+          headerStyle: {
+          backgroundColor: "transparent",
+          },
+          headerTintColor: "#fff",
+          headerTitleStyle: {
+          color: "#fff", },}}/>
+
+
           <Stack.Screen name="ADM" component={ADM} options={{
             headerShown: false
           }} />
 
           <Stack.Screen
             name="GerenciarProduto"
-            component={GerenciarProduto}
-            options={{
+            component={GerenciarProduto} options={{
               title: 'Gerenciar Produto',
               headerStyle: {
-                backgroundColor: '#290814',
-              },
-              headerTintColor: '#8b3151',
-            }}
-          />
+                backgroundColor: '#290814',},headerTintColor: '#8b3151',}}/>
 
           <Stack.Screen name="AddProdutos" component={AddProdutos} options={{
             headerShown: false
