@@ -125,10 +125,11 @@ const styles = StyleSheet.create({
   },
   overlay:{
     flex:1,
-    width:"100%",
-    justifyContent:"center",
-    alignItems:"center",
-    backgroundColor:"rgba(0,0,0,0.35)",
+  width:"100%",
+  justifyContent:"center",
+  alignItems:"center",
+  paddingBottom:60,
+  backgroundColor:"rgba(0,0,0,0.35)",
   },
   logoContainer:{
     justifyContent:"center",
