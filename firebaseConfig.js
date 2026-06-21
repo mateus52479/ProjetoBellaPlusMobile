@@ -12,7 +12,7 @@ const firebaseConfig = {
   appId: "1:630776186556:web:ea8a3e4d1966d7acfcf2b9",
 };
 
-const app = initializeApp(firebaseConfig);
+export const app = initializeApp(firebaseConfig);
 
 const appStorage = createAsyncStorage("bellaplus");
 export const auth = initializeAuth(app, {
