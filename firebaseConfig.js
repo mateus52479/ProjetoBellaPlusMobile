@@ -1,7 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
-import { initializeAuth, getReactNativePersistence } from "firebase/auth";
-import { createAsyncStorage } from "@react-native-async-storage/async-storage";
+import { getAuth } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { signOut } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBad8y47P0RRvC9Sb1fgjmoe6owyclW1Ts",
@@ -12,10 +13,8 @@ const firebaseConfig = {
   appId: "1:630776186556:web:ea8a3e4d1966d7acfcf2b9",
 };
 
-export const app = initializeApp(firebaseConfig);
 
-const appStorage = createAsyncStorage("bellaplus");
-export const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(appStorage),
-});
+const app = initializeApp(firebaseConfig);
+
+export const auth = getAuth(app);
 export const database = getFirestore(app);

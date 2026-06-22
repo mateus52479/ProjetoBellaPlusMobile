@@ -14,6 +14,7 @@ import Pagamento from "./Screens/Pagamento";
 import Cadastrar from "./Screens/Cadastrar";
 import EditProduct from "./Screens/EditProduct";
 import { ProductProvider } from "./context/ProductContext";
+import Profile from './Screens/Profile';
 
 function TabNavigate() {
   const Tab = createBottomTabNavigator();
@@ -55,6 +56,9 @@ export default function App() {
         <Stack.Navigator>
 
 
+          <Stack.Screen name="Profile" component={Profile} options={{
+            headerShown: false
+          }} />
 
           <Stack.Screen name="Login" component={Login} options={{
             headerShown: false
