@@ -1,12 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import {
-  View,
-  StyleSheet,
-  Text,
-  Alert,
-  TouchableOpacity,
-  ActivityIndicator,
-} from "react-native";
+import {View,StyleSheet,Text,Alert,TouchableOpacity,ActivityIndicator,} from "react-native";
 import { WebView } from "react-native-webview";
 import { useProducts } from "../context/ProductContext";
 
