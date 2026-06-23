@@ -3,8 +3,10 @@ import { IconButton } from "react-native-paper";
 import { database } from '../firebaseConfig';
 import { useState, useEffect } from 'react';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { useTheme } from '../context/ThemeContext';
 
 export default function GerenciarCliente({ navigation }) {
+  const { theme } = useTheme();
   const [clientes, setClientes] = useState([]);
 
   async function carregarClientes() {
@@ -64,8 +66,8 @@ export default function GerenciarCliente({ navigation }) {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.txt}>Gerenciamento de Clientes</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.txt, { color: theme.primary }]}>Gerenciamento de Clientes</Text>
 
       <View style={styles.cardContainer}>
         <FlatList
@@ -95,9 +97,9 @@ export default function GerenciarCliente({ navigation }) {
             }
 
             return (
-              <View style={styles.itemCliente}>
+              <View style={[styles.itemCliente, { borderBottomColor: theme.border }]}>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.txtNomeCliente} numberOfLines={1}>
+                  <Text style={[styles.txtNomeCliente, { color: theme.primary }]} numberOfLines={1}>
                     {exibicaoEmail}
                   </Text>
                   <Text style={[styles.txtStatusCliente, estiloStatus]}>
@@ -107,7 +109,7 @@ export default function GerenciarCliente({ navigation }) {
 
                 <IconButton 
                   icon={nomeIcone} 
-                  iconColor="#e58aaa" 
+                  iconColor={theme.primary} 
                   size={24} 
                   onPress={() => alternarBanimento(item.id, item.banido)} 
                 />
@@ -118,11 +120,11 @@ export default function GerenciarCliente({ navigation }) {
             <View style={styles.vazioContainer}>
               <IconButton
                 icon="account-remove"
-                iconColor="#e58aaa"
+                iconColor={theme.primary}
                 size={80}
                 style={styles.iconeVazio}
               />
-              <Text style={styles.txtVazio}>Não existem clientes cadastrados</Text>
+              <Text style={[styles.txtVazio, { color: theme.primary }]}>Não existem clientes cadastrados</Text>
             </View>
           }
         />
@@ -135,7 +137,6 @@ const styles = StyleSheet.create({
   txt: {
     fontSize: 36,  
     fontWeight: 'bold',
-    color: '#e58aaa',
     textAlign: 'center',
     marginBottom: 50,
     textShadowColor: 'rgba(0, 0, 0, 0.9)',
@@ -145,7 +146,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#290814',
     paddingTop: 40,
   },
   cardContainer: {
@@ -156,9 +156,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#290814',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(229, 138, 170, 0.2)',
     marginHorizontal: 20,
     paddingHorizontal: 15,
     paddingVertical: 16,
@@ -168,7 +166,6 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   txtNomeCliente: {
-    color: '#e58aaa',
     fontSize: 18,
     fontWeight: 'bold',
   },
@@ -195,7 +192,6 @@ const styles = StyleSheet.create({
   },
   txtVazio: {
     fontSize: 18,
-    color: '#e58aaa',
     fontStyle: 'italic',
     textAlign: 'center',
     opacity: 0.8,

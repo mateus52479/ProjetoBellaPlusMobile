@@ -1,9 +1,25 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { IconButton } from "react-native-paper"; 
+import { auth, signOut } from "../firebaseConfig";
 
 export default function ADM({ navigation }) {
+  function handleLogout() {
+    signOut(auth).then(() => {
+      navigation.navigate('Login');
+    });
+  }
+
   return (
     <View style={styles.container}>
+      <View style={styles.topBar}>
+        <View />
+        <IconButton
+          icon="logout"
+          iconColor="#e58aaa"
+          size={24}
+          onPress={handleLogout}
+        />
+      </View>
       <Text style={styles.txt}>PAINEL ADM</Text>
 
       <View style={styles.grid}>
@@ -34,6 +50,14 @@ export default function ADM({ navigation }) {
 }
 
 const styles = StyleSheet.create({
+  topBar: {
+    width: '100%',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingTop: 10,
+  },
   txt: {
     fontSize: 46,  
     fontWeight: 'bold',
@@ -49,7 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#290814',
-    paddingTop: 60,
+    paddingTop: 40,
   },
   grid: {
     flexDirection: 'row',

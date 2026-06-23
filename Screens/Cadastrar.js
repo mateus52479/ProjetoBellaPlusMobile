@@ -5,7 +5,7 @@ import { Button } from "react-native-paper";
 import Entypo from "@expo/vector-icons/Entypo";
  
 import { auth, database, createUserWithEmailAndPassword } from "../firebaseConfig";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
  
 const imagemDesktop = require("../Images/roupa2.png");
 const imagemMobile = require("../Images/roupa2Mobile.png");
@@ -57,7 +57,8 @@ export default function Cadastrar({ navigation }) {
       try {
         await setDoc(doc(database, 'usuarios', usuario.uid), {
           email: email.trim(),
-          banido: false
+          banido: false,
+          criadoEm: serverTimestamp()
         });
       } catch (firestoreError) {
         console.log("Erro de permissão/gravação no Firestore: ", firestoreError);
