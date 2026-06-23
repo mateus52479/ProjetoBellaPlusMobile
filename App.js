@@ -130,19 +130,19 @@ function AppContent() {
         <Stack.Screen name="GerenciarProduto" component={GerenciarProduto} options={{
           title: 'Gerenciar Produto',
           headerStyle: { backgroundColor: '#290814' },
-          headerTintColor: '#8b3151',
+          headerTintColor: '#e58aaa',
         }} />
  
         <Stack.Screen name="GerenciarVendas" component={GerenciarVendas} options={{
           title: 'Gerenciar Vendas',
           headerStyle: { backgroundColor: '#290814' },
-          headerTintColor: '#8b3151',
+          headerTintColor: '#e58aaa',
         }} />
  
         <Stack.Screen name="GerenciarCliente" component={GerenciarCliente} options={{
           title: 'Gerenciar Cliente',
           headerStyle: { backgroundColor: '#290814' },
-          headerTintColor: '#8b3151',
+          headerTintColor: '#e58aaa',
         }} />
  
         <Stack.Screen name="AddProdutos" component={AddProdutos} options={{

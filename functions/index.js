@@ -134,6 +134,7 @@ exports.createPayment = functions.https.onRequest(async (req, res) => {
       mpId: p.id, status: p.status, statusDetail: p.status_detail,
       amount: Number(amount), description: description || "Compra Bella Plus",
       paymentMethod, payer: payerInfo, paymentResponse: p,
+      address: payerInfo.address || "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -394,7 +395,7 @@ exports.listCustomerCards = functions.https.onRequest(async (req, res) => {
 exports.createPreference = functions.https.onRequest(async (req, res) => {
   if (req.method === "OPTIONS") return res.status(204).send("");
   const data = await getBody(req);
-  const { amount, description, payerInfo } = data;
+  const { amount, description, payerInfo, address } = data;
   if (!amount || !payerInfo?.email) return fail(res, "INVALID_ARGUMENT", "Dados incompletos");
   const txAmount = Math.round(Number(amount) * 100) / 100;
   const extRef = `order_${Date.now()}`;
@@ -418,6 +419,7 @@ exports.createPreference = functions.https.onRequest(async (req, res) => {
       description: description || "Compra Bella Plus",
       paymentMethod: "checkout",
       payer: payerInfo,
+      address: address || "",
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
