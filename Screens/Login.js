@@ -1,16 +1,13 @@
 import {TextInput,Text,StyleSheet,Alert,ImageBackground,View,TouchableOpacity,Linking, Image, useWindowDimensions} from "react-native";
-import { BlurView } from 'expo-blur';
 import { Button } from "react-native-paper";
 import { useState } from "react";
-import { auth } from "../firebaseConfig";
+import { auth, database, signInWithEmailAndPassword, signOut } from "../firebaseConfig";
+import { doc, getDoc } from "firebase/firestore";
 
-import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
 import Entypo from '@expo/vector-icons/Entypo';
-import Cadastrar from "./Cadastrar";
 
 const imagemDesktop = require("../Images/roupa2.png");
 const imagemMobile = require("../Images/roupa2Mobile.png");
-
 
 
 const abrirInstagram = async () => {
@@ -39,21 +36,44 @@ export default function Login({ navigation }) {
 
 
   const EntrarConta = () => {
-    signInWithEmailAndPassword(auth, email, senha)
-      .then((userCredential) => {
+    if (!email || !senha) {
+      Alert.alert("Aviso", "Preencha todos os campos");
+      return;
+    }
+
+    signInWithEmailAndPassword(auth, email.trim(), senha)
+      .then(async (userCredential) => {
         const user = userCredential.user;
         console.log(user);
 
-        if(email == "admin@gmail.com" && senha == "1234567"){
+        if(email.trim() === "admin@gmail.com" && senha === "1234567"){
           navigation.navigate('ADM');
-        }else{
+          return;
+        }
+
+        try {
+          const clienteRef = doc(database, 'usuarios', user.uid);
+          const clienteSnap = await getDoc(clienteRef);
+
+          if (clienteSnap.exists()) {
+            const dadosCliente = clienteSnap.data();
+            
+            if (dadosCliente.banido === true) {
+              await signOut(auth);
+              Alert.alert("Conta Bloqueada", "Você foi bloqueado e não pode acessar o aplicativo.");
+              return;
+            }
+          }
+          navigation.navigate('Catalog');
+        } catch (error) {
+          console.log(error);
           navigation.navigate('Catalog');
         }
         
       })
       .catch((error) => {
         console.log(error);
-        Alert.alert(error.message);
+        Alert.alert("Erro", "E-mail ou senha incorretos.");
       });
   }
 
@@ -71,7 +91,7 @@ export default function Login({ navigation }) {
     height: width < 600 ? 180 : 220,
     resizeMode: 'contain'}} source={require('../Images/logo.png')} />
     </View>
-    <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail} />
+    <TextInput style={styles.barra} placeholder='Usuario' value={email}onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address" />
 
     <View style={styles.senha}>
       <TextInput  style={styles.input}  placeholder='Senha' value={senha} onChangeText={setSenha} secureTextEntry={mostrarSenha}/>
@@ -88,7 +108,6 @@ export default function Login({ navigation }) {
     <Button style={styles.button} buttonColor="#e58aaa" textColor="#8b3151" mode='contained' onPress={EntrarConta}>Entrar</Button>
   
   
-
 
   <TouchableOpacity  onPress={() => navigation.navigate('Cadastrar')}>
     <Text style={styles.textoConta}>Não possui uma conta ainda?<Text style={styles.cadastro}> Cadastre-se</Text></Text>

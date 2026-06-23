@@ -15,6 +15,8 @@ import Cadastrar from "./Screens/Cadastrar";
 import EditProduct from "./Screens/EditProduct";
 import { ProductProvider } from "./context/ProductContext";
 import Profile from './Screens/Profile';
+import GerenciarCliente from './Screens/GerenciarCliente';
+import GerenciarVendas from "./Screens/GerenciarVendas";
 
 function TabNavigate() {
   const Tab = createBottomTabNavigator();
@@ -56,27 +58,20 @@ export default function App() {
         <Stack.Navigator>
 
 
-          <Stack.Screen name="Profile" component={Profile} options={{
-            headerShown: false
-          }} />
-
           <Stack.Screen name="Login" component={Login} options={{
             headerShown: false
           }} />
-          
+
           <Stack.Screen name="Cadastrar" component={Cadastrar} options={{
-          title: "Cadastrar",
-          headerTransparent: true,
-          headerStyle: {
-          backgroundColor: "transparent",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-          color: "#fff", },}}/>
-
-
-          <Stack.Screen name="ADM" component={ADM} options={{
-            headerShown: false
+            title: "Cadastrar",
+            headerTransparent: true,
+            headerStyle: {
+              backgroundColor: "transparent",
+            },
+            headerTintColor: "#fff",
+            headerTitleStyle: {
+              color: "#fff",
+            },
           }} />
 
           <Stack.Screen
@@ -84,7 +79,36 @@ export default function App() {
             component={GerenciarProduto} options={{
               title: 'Gerenciar Produto',
               headerStyle: {
-                backgroundColor: '#290814',},headerTintColor: '#8b3151',}}/>
+                backgroundColor: '#290814',
+              }, headerTintColor: '#8b3151',
+            }} />
+
+          <Stack.Screen
+            name="GerenciarVendas"
+            component={GerenciarVendas} options={{
+              title: 'Gerenciar Vendas',
+              headerStyle: {
+                backgroundColor: '#290814',
+              }, headerTintColor: '#8b3151',
+            }} />
+
+          <Stack.Screen
+            name="ADM"
+            component={ADM} options={{
+              title: 'ADM',
+              headerStyle: {
+                backgroundColor: '#290814',
+              }, headerTintColor: '#8b3151',
+            }} />
+
+          <Stack.Screen
+            name="GerenciarCliente"
+            component={GerenciarCliente} options={{
+              title: 'Gerenciar Cliente',
+              headerStyle: {
+                backgroundColor: '#290814',
+              }, headerTintColor: '#8b3151',
+            }} />
 
           <Stack.Screen name="AddProdutos" component={AddProdutos} options={{
             headerShown: false
@@ -96,6 +120,9 @@ export default function App() {
             headerShown: false
           }} />
           <Stack.Screen name="Pagamento" component={Pagamento} options={{
+            headerShown: false
+          }} />
+          <Stack.Screen name="Profile" component={Profile} options={{
             headerShown: false
           }} />
 

@@ -4,7 +4,8 @@ import { TextInput,Text, StyleSheet, Alert, ImageBackground,View,TouchableOpacit
 import { Button } from "react-native-paper";
 import Entypo from "@expo/vector-icons/Entypo";
 
-import { auth, createUserWithEmailAndPassword } from "../firebaseConfig";
+import { auth, database, createUserWithEmailAndPassword } from "../firebaseConfig";
+import { doc, setDoc } from "firebase/firestore";
 
 const imagemDesktop = require("../Images/roupa2.png");
 const imagemMobile = require("../Images/roupa2Mobile.png");
@@ -48,11 +49,35 @@ export default function Cadastrar({ navigation }) {
       Alert.alert("As senhas não coincidem");
       return;
     }
+    
     try {
-      await createUserWithEmailAndPassword(auth,email,senha);
+      const userCredential = await createUserWithEmailAndPassword(auth, email.trim(), senha);
+      const usuario = userCredential.user;
+
+      try {
+        await setDoc(doc(database, 'usuarios', usuario.uid), {
+          email: email.trim(),
+          banido: false
+        });
+      } catch (firestoreError) {
+        console.log("Erro de permissão/gravação no Firestore: ", firestoreError);
+      }
+
+      Alert.alert("Sucesso", "Conta criada com sucesso!");
       navigation.navigate("Login");
-    } catch(error){
-      Alert.alert("Erro", error.message);
+
+    } catch (error) {
+      console.log("Erro completo do Firebase Auth:", error);
+      
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert("Erro", "Este e-mail já está em uso.");
+      } else if (error.code === 'auth/weak-password') {
+        Alert.alert("Erro", "A senha deve ter pelo menos 6 caracteres.");
+      } else if (error.code === 'auth/invalid-email') {
+        Alert.alert("Erro", "O formato do e-mail é inválido.");
+      } else {
+        Alert.alert("Erro ao cadastrar", error.message);
+      }
     }
   };
 
@@ -177,7 +202,7 @@ const styles = StyleSheet.create({
   },
   instagramText:{
     marginLeft:8,
-    color:"#e58aaa",
+    color: "#e58aaa",
     fontWeight:"bold",
     fontSize:16,
   },
