@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator, Modal, TextInput, FlatList } from "react-native";
 import { WebView } from "react-native-webview";
 import { useProducts } from "../context/ProductContext";
 import { auth } from "../firebaseConfig";
+import * as FileSystem from "expo-file-system/legacy";
 
 const FUNCTIONS_URL = "https://us-central1-bella-plus-mulherao.cloudfunctions.net";
+const ADDRESSES_FILE = `${FileSystem.documentDirectory}bellaplus_addresses.json`;
 
 async function callFunction(name, data) {
   const response = await fetch(`${FUNCTIONS_URL}/${name}`, {
@@ -40,6 +42,9 @@ export default function Pagamento({ navigation }) {
   const [polling, setPolling] = useState(false);
   const [externalRef, setExternalRef] = useState(null);
   const pollingRef = useRef(null);
+  const [addresses, setAddresses] = useState([]);
+  const [selectedAddress, setSelectedAddress] = useState(null);
+  const [showAddressModal, setShowAddressModal] = useState(false);
 
   const total = useMemo(() => {
     return cart.reduce((sum, item) => sum + parsePrice(item.preco), 0);
@@ -56,11 +61,45 @@ export default function Pagamento({ navigation }) {
       ]);
       return;
     }
-    createPreference();
+    loadAddresses();
     return () => {
       if (pollingRef.current) clearInterval(pollingRef.current);
     };
   }, []);
+
+  async function loadAddresses() {
+    try {
+      const info = await FileSystem.getInfoAsync(ADDRESSES_FILE);
+      if (info.exists) {
+        const data = await FileSystem.readAsStringAsync(ADDRESSES_FILE);
+        const list = JSON.parse(data);
+        setAddresses(list);
+        if (list.length === 1) {
+          setSelectedAddress(list[0]);
+        } else if (list.length > 1) {
+          setShowAddressModal(true);
+        } else {
+          Alert.alert(
+            "Endereço necessário",
+            "Adicione um endereço de entrega antes de continuar.",
+            [{ text: "OK", onPress: () => navigation.navigate("Addresses") }]
+          );
+        }
+      } else {
+        Alert.alert(
+          "Endereço necessário",
+          "Adicione um endereço de entrega antes de continuar.",
+          [{ text: "OK", onPress: () => navigation.navigate("Addresses") }]
+        );
+      }
+    } catch (e) {
+      console.error("Erro ao carregar endereços:", e);
+    }
+  }
+
+  function getFullAddress(addr) {
+    return [addr.street, addr.number, addr.complement, addr.neighborhood, addr.city, addr.state, addr.zipCode ? `CEP: ${addr.zipCode}` : ""].filter(Boolean).join(", ");
+  }
 
   async function createPreference() {
     try {
@@ -72,6 +111,7 @@ export default function Pagamento({ navigation }) {
         amount: total,
         description: description || "Compra Bella Plus",
         payerInfo: { name, email },
+        address: selectedAddress ? getFullAddress(selectedAddress) : "",
       });
       setCheckoutUrl(result.initPoint);
       setExternalRef(result.externalReference);
@@ -241,6 +281,48 @@ export default function Pagamento({ navigation }) {
     );
   }
 
+  if (showAddressModal) {
+    return (
+      <View style={[styles.loadingContainer, { backgroundColor: "#eadde1" }]}>
+        <View style={styles.addressModal}>
+          <Text style={styles.addressModalTitle}>Selecione o endereço de entrega</Text>
+          <FlatList
+            data={addresses}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={styles.addressOption}
+                onPress={() => {
+                  setSelectedAddress(item);
+                  setShowAddressModal(false);
+                }}
+              >
+                <Text style={styles.addressLabel}>{item.label}</Text>
+                <Text style={styles.addressText}>{getFullAddress(item)}</Text>
+              </TouchableOpacity>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.addressEmpty}>Nenhum endereço cadastrado</Text>
+            }
+          />
+          <TouchableOpacity
+            style={styles.addressAddButton}
+            onPress={() => {
+              setShowAddressModal(false);
+              navigation.navigate("Addresses");
+            }}
+          >
+            <Text style={styles.addressAddText}>+ Adicionar novo endereço</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  if (selectedAddress && !checkoutUrl && !paymentResult && loading) {
+    createPreference();
+  }
+
   if (checkoutUrl) {
     return (
       <View style={{ flex: 1 }}>
@@ -312,6 +394,14 @@ export default function Pagamento({ navigation }) {
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eadde1" },
   loadingText: { marginTop: 16, fontSize: 16, color: "#8b3151" },
+  addressModal: { width: "90%", maxHeight: "80%", backgroundColor: "#fff", borderRadius: 16, padding: 20 },
+  addressModalTitle: { fontSize: 18, fontWeight: "bold", color: "#8b3151", textAlign: "center", marginBottom: 16 },
+  addressOption: { backgroundColor: "#f9f0f3", borderRadius: 12, padding: 14, marginBottom: 10, borderWidth: 1, borderColor: "#e58aaa" },
+  addressLabel: { fontSize: 15, fontWeight: "bold", color: "#8b3151", marginBottom: 4 },
+  addressText: { fontSize: 13, color: "#666", lineHeight: 18 },
+  addressEmpty: { fontSize: 14, color: "#999", textAlign: "center", marginVertical: 20 },
+  addressAddButton: { marginTop: 10, padding: 12, borderRadius: 20, backgroundColor: "#e58aaa", alignItems: "center" },
+  addressAddText: { color: "#fff", fontWeight: "bold", fontSize: 14 },
   loadingOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(255,247,250,0.9)" },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "#8b3151", paddingHorizontal: 16, paddingVertical: 12, paddingTop: 48 },
   headerTitle: { fontSize: 18, fontWeight: "bold", color: "#fff" },

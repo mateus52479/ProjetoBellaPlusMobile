@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, FlatList, Alert, Modal, TouchableOpacity, Scrol
 import { IconButton, Button } from 'react-native-paper';
 import { database } from '../firebaseConfig';
 import { collection, getDocs, doc, updateDoc } from 'firebase/firestore';
+import { useTheme } from '../context/ThemeContext';
 
-export default function GerenciarVendas() {
+export default function GerenciarVendas({ navigation }) {
+  const { theme } = useTheme();
   const [vendas, setVendas] = useState([]);
   const [vendaSelecionada, setVendaSelecionada] = useState(null);
   const [modalVisivel, setModalVisivel] = useState(false);
@@ -103,8 +105,8 @@ export default function GerenciarVendas() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.txt}>Controle de Vendas</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <Text style={[styles.txt, { color: theme.primary }]}>Controle de Vendas</Text>
 
       <View style={styles.cardContainer}>
         <FlatList
@@ -120,26 +122,31 @@ export default function GerenciarVendas() {
             }
 
             return (
-              <TouchableOpacity style={styles.itemVenda} onPress={() => abrirComprovante(item)} activeOpacity={0.8}>
+              <TouchableOpacity style={[styles.itemVenda, { borderBottomColor: theme.border }]} onPress={() => abrirComprovante(item)} activeOpacity={0.8}>
                 <View style={styles.infoContainer}>
-                  <Text style={styles.txtProdutos} numberOfLines={1}>
+                  <Text style={[styles.txtProdutos, { color: theme.primary }]} numberOfLines={1}>
                     {nomeExibicao}
                   </Text>
-                  <Text style={styles.txtValor}>
+                  <Text style={[styles.txtValor, { color: theme.text }]}>
                     Valor: {formatMoney(item.amount)}
                   </Text>
                   <Text style={[styles.txtStatus, obterEstiloStatus(item.status)]}>
                     Status: {traduzirStatus(item.status)}
                   </Text>
+                  {item.address ? (
+                    <Text style={[styles.txtEndereco, { color: theme.text }]} numberOfLines={1}>
+                      Endereço: {item.address}
+                    </Text>
+                  ) : null}
                 </View>
-                <IconButton icon="receipt" iconColor="#e58aaa" size={24} />
+                <IconButton icon="receipt" iconColor={theme.primary} size={24} />
               </TouchableOpacity>
             );
           }}
           ListEmptyComponent={
             <View style={styles.vazioContainer}>
-              <IconButton icon="cash-register" iconColor="#e58aaa" size={80} style={styles.iconeVazio} />
-              <Text style={styles.txtVazio}>Nenhuma venda registrada ainda</Text>
+              <IconButton icon="cash-register" iconColor={theme.primary} size={80} style={styles.iconeVazio} />
+              <Text style={[styles.txtVazio, { color: theme.primary }]}>Nenhuma venda registrada ainda</Text>
             </View>
           }
         />
@@ -178,6 +185,13 @@ export default function GerenciarVendas() {
                   <Text style={styles.reciboTextoValor}>
                     {vendaSelecionada.mpId ? vendaSelecionada.mpId : 'N/A'}
                   </Text>
+
+                  {vendaSelecionada.address ? (
+                    <>
+                      <Text style={styles.reciboTextoLabel}>ENDEREÇO DE ENTREGA:</Text>
+                      <Text style={styles.reciboTextoValor}>{vendaSelecionada.address}</Text>
+                    </>
+                  ) : null}
                   
                   <Text style={styles.reciboLinha}>-----------------------------------------</Text>
 
@@ -225,8 +239,8 @@ export default function GerenciarVendas() {
 
             <Button 
               mode="outlined" 
-              textColor="#8b3151" 
-              style={styles.btnFechar}
+              textColor={theme.primary} 
+              style={[styles.btnFechar, { borderColor: theme.primary }]}
               onPress={() => setModalVisivel(false)}
             >
               Fechar Recibo
@@ -242,7 +256,6 @@ const styles = StyleSheet.create({
   txt: {
     fontSize: 36,  
     fontWeight: 'bold',
-    color: '#e58aaa',
     textAlign: 'center',
     marginBottom: 50,
     textShadowColor: 'rgba(0, 0, 0, 0.9)',
@@ -252,7 +265,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#290814',
     paddingTop: 40,
   },
   cardContainer: {
@@ -263,9 +275,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#290814',
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(229, 138, 170, 0.2)',
     marginHorizontal: 20,
     paddingHorizontal: 15,
     paddingVertical: 16,
@@ -275,12 +285,10 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   txtProdutos: {
-    color: '#e58aaa',
     fontSize: 18,
     fontWeight: 'bold',
   },
   txtValor: {
-    color: '#FFF',
     fontSize: 15,
     marginTop: 4,
     fontWeight: '600',
@@ -289,6 +297,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     marginTop: 4,
     fontWeight: 'bold',
+  },
+  txtEndereco: {
+    fontSize: 12,
+    marginTop: 3,
+    fontStyle: 'italic',
   },
   statusAprovado: {
     color: '#4CAF50',
@@ -312,7 +325,6 @@ const styles = StyleSheet.create({
   },
   txtVazio: {
     fontSize: 18,
-    color: '#e58aaa',
     fontStyle: 'italic',
     textAlign: 'center',
     opacity: 0.8,
@@ -392,7 +404,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   btnFechar: {
-    borderColor: '#8b3151',
     marginTop: 5,
   },
 });
