@@ -79,6 +79,12 @@ export function ProductProvider({ children }) {
 
   function clearCart() {
     setCart([]);
+    FileSystem.writeAsStringAsync(CART_FILE, JSON.stringify([]));
+  }
+
+  function clearFavorites() {
+    setFavorites([]);
+    FileSystem.writeAsStringAsync(FAVORITES_FILE, JSON.stringify([]));
   }
 
   return (
@@ -93,6 +99,7 @@ export function ProductProvider({ children }) {
         removeFromCart,
         isInCart,
         clearCart,
+        clearFavorites,
       }}
     >
       {children}
