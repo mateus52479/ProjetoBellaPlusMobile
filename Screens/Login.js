@@ -4,9 +4,8 @@ import { Button } from "react-native-paper";
 import { useState } from "react";
 import { auth } from "../firebaseConfig";
 
-import {createUserWithEmailAndPassword,signInWithEmailAndPassword} from "firebase/auth";
+import {signInWithEmailAndPassword} from "firebase/auth";
 import Entypo from '@expo/vector-icons/Entypo';
-import Cadastrar from "./Cadastrar";
 
 const imagemDesktop = require("../Images/roupa2.png");
 const imagemMobile = require("../Images/roupa2Mobile.png");

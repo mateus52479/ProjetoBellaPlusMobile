@@ -4,7 +4,7 @@ import { TextInput,Text, StyleSheet, Alert, ImageBackground,View,TouchableOpacit
 import { Button } from "react-native-paper";
 import Entypo from "@expo/vector-icons/Entypo";
 
-import { auth, createUserWithEmailAndPassword } from "../firebaseConfig";
+import { auth, createUserWithEmailAndPassword } from "../firebaseConfig.js";
 
 const imagemDesktop = require("../Images/roupa2.png");
 const imagemMobile = require("../Images/roupa2Mobile.png");

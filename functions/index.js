@@ -242,8 +242,23 @@ exports.mercadopagoWebhook = functions.https.onRequest(async (req, res) => {
       const p = r.data;
       const existing = await admin.firestore().collection("payments").where("mpId", "==", p.id).limit(1).get();
       if (!existing.empty) {
-        await existing.docs[0].ref.update({ status: p.status, statusDetail: p.status_detail, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+        await existing.docs[0].ref.update({ status: p.status, statusDetail: p.status_detail, mpId: p.id, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
         console.log(`Payment ${p.id} updated to ${p.status}`);
+      } else if (p.external_reference) {
+        const byRef = await admin.firestore().collection("payments").where("externalReference", "==", p.external_reference).limit(1).get();
+        if (!byRef.empty) {
+          await byRef.docs[0].ref.update({ status: p.status, statusDetail: p.status_detail, mpId: p.id, paymentMethod: p.payment_method_id, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+          console.log(`Payment ${p.id} updated by external_reference ${p.external_reference} to ${p.status}`);
+        } else {
+          await admin.firestore().collection("payments").add({
+            mpId: p.id, externalReference: p.external_reference, status: p.status, statusDetail: p.status_detail,
+            amount: p.transaction_amount, description: p.description || "",
+            paymentMethod: p.payment_method_id,
+            payer: { email: p.payer?.email, name: `${p.payer?.first_name || ""} ${p.payer?.last_name || ""}`.trim() },
+            paymentResponse: p, createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+          console.log(`Payment ${p.id} created via webhook`);
+        }
       } else {
         await admin.firestore().collection("payments").add({
           mpId: p.id, status: p.status, statusDetail: p.status_detail,
@@ -382,6 +397,7 @@ exports.createPreference = functions.https.onRequest(async (req, res) => {
   const { amount, description, payerInfo } = data;
   if (!amount || !payerInfo?.email) return fail(res, "INVALID_ARGUMENT", "Dados incompletos");
   const txAmount = Math.round(Number(amount) * 100) / 100;
+  const extRef = `order_${Date.now()}`;
   try {
     const r = await axios.post("https://api.mercadopago.com/checkout/preferences", {
       items: [{ title: description || "Compra Bella Plus", quantity: 1, currency_id: "BRL", unit_price: txAmount }],
@@ -390,11 +406,81 @@ exports.createPreference = functions.https.onRequest(async (req, res) => {
       auto_return: "approved",
       notification_url: WEBHOOK_URL,
       binary_mode: true,
-      external_reference: `order_${Date.now()}`,
+      external_reference: extRef,
     }, { headers: authHeaders() });
-    ok(res, { success: true, preferenceId: r.data.id, initPoint: r.data.init_point });
+
+    await admin.firestore().collection("payments").add({
+      externalReference: extRef,
+      preferenceId: r.data.id,
+      status: "pending",
+      statusDetail: "Aguardando pagamento",
+      amount: txAmount,
+      description: description || "Compra Bella Plus",
+      paymentMethod: "checkout",
+      payer: payerInfo,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    });
+
+    ok(res, { success: true, preferenceId: r.data.id, initPoint: r.data.init_point, externalReference: extRef });
   } catch (e) {
     console.error("Preference error:", e.response?.data || e.message);
     fail(res, "INTERNAL", "Erro ao criar preferência");
+  }
+});
+
+exports.verifyPaymentByRef = functions.https.onRequest(async (req, res) => {
+  if (req.method === "OPTIONS") return res.status(204).send("");
+  const data = await getBody(req);
+  const { externalReference } = data;
+  if (!externalReference) return fail(res, "INVALID_ARGUMENT", "externalReference obrigatório");
+  try {
+    const snap = await admin.firestore().collection("payments")
+      .where("externalReference", "==", externalReference)
+      .limit(1)
+      .get();
+    if (!snap.empty) {
+      const doc = snap.docs[0];
+      const p = doc.data();
+      if (p.status === "approved") {
+        return ok(res, { success: true, found: true, status: "approved", statusDetail: p.statusDetail, amount: p.amount, mpId: p.mpId || null });
+      }
+      if (p.mpId) {
+        try {
+          const r = await axios.get(`${MP_API}/payments/${p.mpId}`, { headers: authHeaders() });
+          if (r.data.status === "approved" || r.data.status !== p.status) {
+            await doc.ref.update({ status: r.data.status, statusDetail: r.data.status_detail, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+            return ok(res, { success: true, found: true, status: r.data.status, statusDetail: r.data.status_detail, amount: r.data.transaction_amount, mpId: r.data.id });
+          }
+        } catch (mpErr) { console.log("MP direct check error:", mpErr.message); }
+      }
+      return ok(res, { success: true, found: true, status: p.status, statusDetail: p.statusDetail, amount: p.amount, mpId: p.mpId || null });
+    }
+
+    try {
+      const searchUrl = `${MP_API}/payments/search?external_reference=${externalReference}`;
+      const r = await axios.get(searchUrl, { headers: authHeaders() });
+      const results = r.data?.results || [];
+      if (results.length > 0) {
+        const mp = results[0];
+        const existing = await admin.firestore().collection("payments").where("externalReference", "==", externalReference).limit(1).get();
+        if (!existing.empty) {
+          await existing.docs[0].ref.update({ status: mp.status, statusDetail: mp.status_detail, mpId: mp.id, paymentMethod: mp.payment_method_id, updatedAt: admin.firestore.FieldValue.serverTimestamp() });
+        } else {
+          await admin.firestore().collection("payments").add({
+            mpId: mp.id, externalReference, status: mp.status, statusDetail: mp.status_detail,
+            amount: mp.transaction_amount, description: mp.description || "",
+            paymentMethod: mp.payment_method_id,
+            payer: { email: mp.payer?.email, name: `${mp.payer?.first_name || ""} ${mp.payer?.last_name || ""}`.trim() },
+            paymentResponse: mp, createdAt: admin.firestore.FieldValue.serverTimestamp(),
+          });
+        }
+        return ok(res, { success: true, found: true, status: mp.status, statusDetail: mp.status_detail, amount: mp.transaction_amount, mpId: mp.id });
+      }
+    } catch (mpErr) { console.log("MP search error:", mpErr.message); }
+
+    return ok(res, { success: true, found: false, status: "pending" });
+  } catch (e) {
+    console.error("Verify error:", e);
+    fail(res, "INTERNAL", "Erro ao verificar pagamento");
   }
 });

@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
-import {View,StyleSheet,Text,Alert,TouchableOpacity,ActivityIndicator,} from "react-native";
+import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { View, StyleSheet, Text, Alert, TouchableOpacity, ActivityIndicator } from "react-native";
 import { WebView } from "react-native-webview";
 import { useProducts } from "../context/ProductContext";
+import { auth } from "../firebaseConfig";
 
 const FUNCTIONS_URL = "https://us-central1-bella-plus-mulherao.cloudfunctions.net";
 
@@ -21,25 +22,9 @@ async function callFunction(name, data) {
 function parsePrice(preco) {
   if (!preco) return 0;
   if (typeof preco === "number") return preco;
-  const cleaned = preco
-    .replace("R$", "")
-    .replace(/\./g, "")
-    .replace(",", ".")
-    .trim();
+  const cleaned = preco.replace("R$", "").replace(/\./g, "").replace(",", ".").trim();
   const parsed = parseFloat(cleaned);
   return isNaN(parsed) ? 0 : parsed;
-}
-
-function formatDate(dateStr) {
-  if (!dateStr) return "";
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
 }
 
 function formatMoney(value) {
@@ -52,6 +37,9 @@ export default function Pagamento({ navigation }) {
   const [checkoutUrl, setCheckoutUrl] = useState(null);
   const [loading, setLoading] = useState(true);
   const [paymentResult, setPaymentResult] = useState(null);
+  const [polling, setPolling] = useState(false);
+  const [externalRef, setExternalRef] = useState(null);
+  const pollingRef = useRef(null);
 
   const total = useMemo(() => {
     return cart.reduce((sum, item) => sum + parsePrice(item.preco), 0);
@@ -69,16 +57,24 @@ export default function Pagamento({ navigation }) {
       return;
     }
     createPreference();
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
   }, []);
 
   async function createPreference() {
     try {
+      const user = auth.currentUser;
+      const email = user?.email || "cliente@email.com";
+      const name = user?.displayName || "Cliente";
+
       const result = await callFunction("createPreference", {
         amount: total,
         description: description || "Compra Bella Plus",
-        payerInfo: { name: "Cliente", email: "cliente@email.com" },
+        payerInfo: { name, email },
       });
       setCheckoutUrl(result.initPoint);
+      setExternalRef(result.externalReference);
     } catch (error) {
       Alert.alert("Erro", error.message || "Erro ao iniciar pagamento", [
         { text: "Voltar", onPress: () => navigation.goBack() },
@@ -86,6 +82,116 @@ export default function Pagamento({ navigation }) {
     } finally {
       setLoading(false);
     }
+  }
+
+  const handleWebViewMessage = useCallback((event) => {
+    try {
+      const data = JSON.parse(event.nativeEvent.data);
+      if (data.type === "checkout") {
+        const status = data.status;
+        const paymentId = data.paymentId || null;
+
+        if (status === "success" || status === "approved") {
+          if (paymentId) {
+            verifyByPaymentId(paymentId);
+          } else {
+            setCheckoutUrl(null);
+            setPaymentResult({
+              status: "approved",
+              statusDetail: "Pagamento aprovado",
+              transactionAmount: total,
+              paymentId,
+            });
+          }
+        } else if (status === "failure" || status === "rejected") {
+          setCheckoutUrl(null);
+          Alert.alert("Pagamento recusado", "Tente novamente com outra forma de pagamento.", [
+            { text: "OK", onPress: () => navigation.goBack() },
+          ]);
+        } else {
+          startVerification();
+        }
+      }
+    } catch (e) {
+      console.log("Erro ao processar mensagem do WebView:", e);
+    }
+  }, [total, externalRef]);
+
+  async function verifyByPaymentId(paymentId) {
+    try {
+      setPolling(true);
+      const result = await callFunction("getPaymentStatus", { paymentId });
+      if (result.success && result.payment) {
+        const p = result.payment;
+        setCheckoutUrl(null);
+        setPaymentResult({
+          status: p.status,
+          statusDetail: p.statusDetail || p.status,
+          transactionAmount: total,
+          paymentId: p.id,
+        });
+      }
+    } catch (error) {
+      console.log("Erro ao verificar pagamento:", error);
+      setCheckoutUrl(null);
+      setPaymentResult({
+        status: "pending",
+        statusDetail: "Pagamento em processamento. Verifique sua conta.",
+        transactionAmount: total,
+        paymentId,
+      });
+    } finally {
+      setPolling(false);
+    }
+  }
+
+  async function verifyByExternalRef() {
+    if (!externalRef) return;
+    try {
+      const result = await callFunction("verifyPaymentByRef", { externalReference: externalRef });
+      if (result.success && result.found && result.status === "approved") {
+        return true;
+      }
+      return false;
+    } catch (e) {
+      console.log("Verify by ref error:", e);
+      return false;
+    }
+  }
+
+  function startVerification() {
+    if (pollingRef.current) return;
+    setPolling(true);
+    let attempts = 0;
+    const maxAttempts = 15;
+
+    pollingRef.current = setInterval(async () => {
+      attempts++;
+      if (attempts >= maxAttempts) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+        setPolling(false);
+        setCheckoutUrl(null);
+        setPaymentResult({
+          status: "pending",
+          statusDetail: "Pagamento ainda nao confirmado. Verifique sua conta ou aguarde.",
+          transactionAmount: total,
+        });
+        return;
+      }
+      const approved = await verifyByExternalRef();
+      if (approved) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+        setPolling(false);
+        setCheckoutUrl(null);
+        setPaymentResult({
+          status: "approved",
+          statusDetail: "Pagamento aprovado",
+          transactionAmount: total,
+        });
+      }
+    }, 5000);
   }
 
   function handleFinish() {
@@ -110,8 +216,26 @@ export default function Pagamento({ navigation }) {
         </Text>
         <Text style={styles.resultStatus}>{paymentResult.statusDetail}</Text>
         <Text style={styles.resultAmount}>{formatMoney(paymentResult.transactionAmount)}</Text>
+
+        {status === "pending" && (
+          <TouchableOpacity
+            style={[styles.finishButton, { backgroundColor: "#e58aaa", marginBottom: 12 }]}
+            onPress={() => {
+              if (pollingRef.current) {
+                clearInterval(pollingRef.current);
+                pollingRef.current = null;
+              }
+              setPaymentResult(null);
+              setCheckoutUrl(null);
+              navigation.goBack();
+            }}
+          >
+            <Text style={styles.finishButtonText}>Voltar ao Carrinho</Text>
+          </TouchableOpacity>
+        )}
+
         <TouchableOpacity style={styles.finishButton} onPress={handleFinish}>
-          <Text style={styles.finishButtonText}>Voltar ao Catálogo</Text>
+          <Text style={styles.finishButtonText}>Voltar ao Catalogo</Text>
         </TouchableOpacity>
       </View>
     );
@@ -125,45 +249,53 @@ export default function Pagamento({ navigation }) {
             <Text style={styles.headerBack}>Voltar</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Mercado Pago</Text>
-          <View style={{ width: 60 }} />
+          {polling ? (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+              <ActivityIndicator size="small" color="#fff" />
+              <Text style={styles.headerBack}>Verificando...</Text>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={startVerification}>
+              <Text style={styles.headerBack}>Verificar</Text>
+            </TouchableOpacity>
+          )}
         </View>
         <WebView
           source={{ uri: checkoutUrl }}
           style={{ flex: 1 }}
+          onMessage={handleWebViewMessage}
           onNavigationStateChange={(navState) => {
             const url = navState.url || "";
             if (url.includes("checkout-result.html")) {
               const params = url.includes("?")
                 ? new URLSearchParams(url.split("?")[1])
                 : new URLSearchParams("");
-              const mpStatus = params.get("status") || "unknown";
+              const mpStatus = params.get("status") || params.get("r") || "unknown";
               const paymentId = params.get("payment_id") || null;
-              if (mpStatus === "approved") {
-                setCheckoutUrl(null);
-                setPaymentResult({
-                  status: "approved",
-                  statusDetail: "Pagamento aprovado",
-                  transactionAmount: total,
-                  paymentId,
-                });
+
+              if (mpStatus === "approved" || mpStatus === "success") {
+                if (paymentId) {
+                  verifyByPaymentId(paymentId);
+                } else {
+                  startVerification();
+                }
               } else if (mpStatus === "rejected" || mpStatus === "failure") {
                 setCheckoutUrl(null);
-                Alert.alert(
-                  "Pagamento recusado",
-                  "Tente novamente com outra forma de pagamento.",
-                  [{ text: "OK", onPress: () => navigation.goBack() }]
-                );
+                Alert.alert("Pagamento recusado", "Tente novamente com outra forma de pagamento.", [
+                  { text: "OK", onPress: () => navigation.goBack() },
+                ]);
               } else {
-                setCheckoutUrl(null);
-                setPaymentResult({
-                  status: "pending",
-                  statusDetail: "Aguardando confirmação",
-                  transactionAmount: total,
-                  paymentId,
-                });
+                startVerification();
               }
             }
           }}
+          startInLoadingState={true}
+          renderLoading={() => (
+            <View style={styles.loadingOverlay}>
+              <ActivityIndicator size="large" color="#8b3151" />
+              <Text style={styles.loadingText}>Carregando pagamento...</Text>
+            </View>
+          )}
         />
       </View>
     );
@@ -180,6 +312,7 @@ export default function Pagamento({ navigation }) {
 const styles = StyleSheet.create({
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#eadde1" },
   loadingText: { marginTop: 16, fontSize: 16, color: "#8b3151" },
+  loadingOverlay: { position: "absolute", top: 0, left: 0, right: 0, bottom: 0, justifyContent: "center", alignItems: "center", backgroundColor: "rgba(255,247,250,0.9)" },
   header: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", backgroundColor: "#8b3151", paddingHorizontal: 16, paddingVertical: 12, paddingTop: 48 },
   headerTitle: { fontSize: 18, fontWeight: "bold", color: "#fff" },
   headerBack: { fontSize: 16, color: "#fff", fontWeight: "bold" },

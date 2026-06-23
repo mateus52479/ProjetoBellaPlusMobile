@@ -1,12 +1,14 @@
 import React from "react";
 import { Modal, View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import { useProducts } from "../context/ProductContext";
+import { useTheme } from "../context/ThemeContext";
 
 export default function ProductModal({ product, visible, onClose }) {
 
   if (!product) return null;
 
   const { isFavorite, addFavorite, removeFavorite, isInCart, addToCart, removeFromCart } = useProducts();
+  const { theme } = useTheme();
 
   const imageSource = product.imagem
     ? { uri: product.imagem }
@@ -42,23 +44,23 @@ export default function ProductModal({ product, visible, onClose }) {
   return (
     <Modal visible={visible} animationType="slide">
 
-      <ScrollView style={styles.container}>
+      <ScrollView style={[styles.container, { backgroundColor: theme.background }]}>
 
         <Image source={imageSource} style={styles.image} />
-        <Text style={styles.name}>{nome}</Text>
-        <Text style={styles.size}>{tamanho}</Text>
-        <Text style={styles.price}>{preco}</Text>
+        <Text style={[styles.name, { color: theme.primary }]}>{nome}</Text>
+        <Text style={[styles.size, { color: theme.accent }]}>{tamanho}</Text>
+        <Text style={[styles.price, { color: theme.primary }]}>{preco}</Text>
 
         {descricao && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Descrição</Text>
-            <Text style={styles.description}>{descricao}</Text>
+            <Text style={[styles.sectionTitle, { color: theme.primary }]}>Descricao</Text>
+            <Text style={[styles.description, { color: theme.textSecondary }]}>{descricao}</Text>
           </View>
         )}
 
         <View style={styles.buttonRow}>
           <TouchableOpacity
-            style={[styles.actionButton, favorited && styles.actionButtonActive]}
+            style={[styles.actionButton, { backgroundColor: theme.accent }, favorited && [styles.actionButtonActive, { backgroundColor: theme.primary }]]}
             onPress={toggleFavorite}
           >
             <Text style={styles.actionButtonText}>
@@ -67,7 +69,7 @@ export default function ProductModal({ product, visible, onClose }) {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.actionButton, inCart && styles.actionButtonActive]}
+            style={[styles.actionButton, { backgroundColor: theme.accent }, inCart && [styles.actionButtonActive, { backgroundColor: theme.primary }]]}
             onPress={toggleCart}
           >
             <Text style={styles.actionButtonText}>
@@ -76,7 +78,7 @@ export default function ProductModal({ product, visible, onClose }) {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity style={styles.closeButton} onPress={onClose}>
+        <TouchableOpacity style={[styles.closeButton, { backgroundColor: theme.primary }]} onPress={onClose}>
           <Text style={styles.closeText}>Sair</Text>
         </TouchableOpacity>
 
@@ -89,7 +91,6 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-    backgroundColor: "#fff7fa",
     padding: 20,
   },
 
@@ -103,19 +104,16 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontWeight: "bold",
     marginTop: 20,
-    color: "#8b3151",
   },
 
   size: {
     fontSize: 18,
-    color: "#e58aaa",
     marginTop: 10,
   },
 
   price: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#8b3151",
     marginTop: 10,
   },
 
@@ -126,13 +124,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#8b3151",
     marginBottom: 6,
   },
 
   description: {
     fontSize: 16,
-    color: "#555",
     fontStyle: "italic",
     lineHeight: 22,
   },
@@ -146,14 +142,12 @@ const styles = StyleSheet.create({
 
   actionButton: {
     flex: 1,
-    backgroundColor: "#e58aaa",
     padding: 14,
     borderRadius: 30,
     alignItems: "center",
   },
 
   actionButtonActive: {
-    backgroundColor: "#8b3151",
   },
 
   actionButtonText: {
@@ -163,10 +157,10 @@ const styles = StyleSheet.create({
   },
 
   closeButton: {
-    backgroundColor: "#b34a6fff",
     padding: 16,
     borderRadius: 30,
     marginTop: 20,
+    marginBottom: 40,
     alignItems: "center",
   },
 

@@ -2,20 +2,22 @@ import React, { useState } from "react";
 import { View, FlatList, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { useProducts } from "../context/ProductContext";
 import ProductModal from "../components/ProductModal";
+import { useTheme } from "../context/ThemeContext";
 
 export default function Cart({ navigation }) {
   const { cart } = useProducts();
   const [selectedProduct, setSelectedProduct] = useState(null);
+  const { theme } = useTheme();
 
   function finalizarCompra() {
     navigation.navigate("Pagamento");
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {cart.length === 0 ? (
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Carrinho vazio</Text>
+          <Text style={[styles.emptyText, { color: theme.primary }]}>Carrinho vazio</Text>
         </View>
       ) : (
         <>
@@ -23,15 +25,15 @@ export default function Cart({ navigation }) {
             data={cart}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <TouchableOpacity style={styles.item} onPress={() => setSelectedProduct(item)}>
+              <TouchableOpacity style={[styles.item, { backgroundColor: theme.surface }]} onPress={() => setSelectedProduct(item)}>
                 <View style={styles.itemInfo}>
-                  <Text style={styles.itemName}>{item.nome}</Text>
-                  <Text style={styles.itemPrice}>{item.preco}</Text>
+                  <Text style={[styles.itemName, { color: theme.primary }]}>{item.nome}</Text>
+                  <Text style={[styles.itemPrice, { color: theme.accent }]}>{item.preco}</Text>
                 </View>
               </TouchableOpacity>
             )}
           />
-          <TouchableOpacity style={styles.finalizarButton} onPress={finalizarCompra}>
+          <TouchableOpacity style={[styles.finalizarButton, { backgroundColor: theme.primary }]} onPress={finalizarCompra}>
             <Text style={styles.finalizarText}>Finalizar Compra</Text>
           </TouchableOpacity>
         </>
@@ -49,7 +51,6 @@ export default function Cart({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff7fa",
     paddingTop: 50,
     paddingHorizontal: 16,
   },
@@ -60,13 +61,11 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: "#8b3151",
     fontStyle: "italic",
   },
   item: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 16,
     marginBottom: 8,
@@ -82,15 +81,12 @@ const styles = StyleSheet.create({
   itemName: {
     fontSize: 16,
     fontWeight: "bold",
-    color: "#8b3151",
   },
   itemPrice: {
     fontSize: 14,
-    color: "#e58aaa",
     marginTop: 4,
   },
   finalizarButton: {
-    backgroundColor: "#8b3151",
     padding: 16,
     borderRadius: 30,
     alignItems: "center",
